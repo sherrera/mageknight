@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtualenv
+venv/
+
+# Logs
+*.log
+
+# Data files
+minis.json
+minis_cleaned.json
+minis_factions_cleaned.json
+minis_final.json
+minis_fixed.json
+minis_merged.json
+minis_repaired.json
+minis_valued.json
+rebellion_minis.json
+rebellion_minis_fixed.json

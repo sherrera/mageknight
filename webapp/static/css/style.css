@@ -1,0 +1,244 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+.filters {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filters input[type="text"], .filters button {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.filters button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.filters button:hover {
+    background-color: #0056b3;
+}
+
+#miniaturesContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 20px;
+}
+
+.miniature-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+    padding: 15px;
+}
+
+.miniature-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.miniature-card h2 {
+    font-size: 1.2em;
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #007bff;
+}
+
+.miniature-card p {
+    font-size: 0.9em;
+    margin-bottom: 3px;
+}
+
+.miniature-card .clicks-data {
+    margin-top: 10px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    text-align: left;
+}
+
+.miniature-card .click-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8em;
+    padding: 2px 0;
+    border-bottom: 1px dotted #eee;
+}
+
+.miniature-card .click-row:last-child {
+    border-bottom: none;
+}
+
+.miniature-card .ability-cell {
+    padding: 0 5px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-left: 5px;
+    color: #000; /* Default text color for abilities */
+}
+
+.miniature-card .ability-cell[style*="background-color: rgb(0, 0, 0)"],
+.miniature-card .ability-cell[style*="background-color: #000000"] {
+    color: #fff;
+}
+
+.faction-tag {
+    display: inline-block;
+    background-color: #e2e6ea;
+    color: #007bff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin: 2px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background-color 0.2s ease;
+}
+
+.faction-tag:hover {
+    background-color: #dae0e5;
+    color: #0056b3;
+}
+
+/* Shopping List Styles */
+#total-price-container {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.shopping-list-item {
+    display: flex;
+    align-items: flex-start; /* Align items to the top */
+    justify-content: space-between;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 15px;
+    gap: 15px;
+}
+
+.shopping-list-item-col-1 {
+    flex-shrink: 0;
+}
+
+.shopping-list-item-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.shopping-list-item-col-2 {
+    flex-grow: 1;
+}
+
+.shopping-list-item-col-2 h3 {
+    margin: 0 0 10px 0;
+    color: #007bff;
+}
+
+.shopping-list-item-col-2 p {
+    margin: 0 0 5px 0;
+    font-size: 0.9em;
+}
+
+.shopping-list-item-col-3 {
+    flex-shrink: 0;
+    width: 120px; /* Give the pricing column a fixed width */
+}
+
+.shopping-list-item-col-3 p {
+    margin: 0 0 5px 0;
+    font-size: 0.9em;
+}
+
+.shopping-list-item-col-4 {
+    flex-shrink: 0;
+}
+
+.shopping-list-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 150px; /* Give the inputs a fixed width */
+}
+
+.shopping-list-inputs input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%; /* Make inputs fill the container */
+}
+
+.shopping-list-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.shopping-list-buttons button {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.shopping-list-buttons button.remove-btn {
+    background-color: #dc3545;
+}
+
+.shopping-list-buttons button:hover {
+    opacity: 0.9;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.quantity-btn {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #ddd;
+    background-color: #f4f4f4;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.quantity-value {
+    font-weight: bold;
+}
