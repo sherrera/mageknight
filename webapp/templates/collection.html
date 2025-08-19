@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mage Knight Miniatures</title>
+    <title>My Collection</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Mage Knight Miniatures Database</h1>
-    <a href="/shopping-list">Go to Shopping List</a> | <a href="/collection">My Collection</a>
+    <a href="/">Back to Main Page</a>
 
     <div class="filters">
         <input type="text" id="nameFilter" placeholder="Filter by Name">
@@ -36,6 +36,6 @@
 
     <div id="miniaturesContainer"></div>
 
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/collection.js') }}"></script>
 </body>
 </html>

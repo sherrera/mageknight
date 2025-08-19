@@ -99,6 +99,14 @@ class ShoppingListItem(Base):
 
     miniature = relationship('Miniature')
 
+class CollectionItem(Base):
+    __tablename__ = 'collection_items'
+    id = Column(Integer, primary_key=True)
+    miniature_id = Column(Integer, ForeignKey('miniatures.id'), nullable=False, unique=True)
+    quantity = Column(Integer, nullable=False, default=1)
+
+    miniature = relationship('Miniature')
+
 # --- End of Models ---
 
 Session = sessionmaker(bind=engine)
@@ -112,6 +120,10 @@ def index():
 @app.route('/shopping-list')
 def shopping_list_page():
     return render_template('shopping_list.html')
+
+@app.route('/collection')
+def collection_page():
+    return render_template('collection.html')
 
 # --- API Endpoints ---
 
@@ -138,6 +150,7 @@ def get_minis():
     min_defense = request.args.get('min_defense', type=int)
     min_damage = request.args.get('min_damage', type=int)
     min_range = request.args.get('min_range', type=int)
+    collection = request.args.get('collection', type=bool)
 
     if name:
         minis_query = minis_query.filter(Miniature.name.ilike(f'%{name}%'))
@@ -169,6 +182,8 @@ def get_minis():
         minis_query = minis_query.filter(Miniature.clicks.any(ClickStat.damage >= min_damage))
     if min_range is not None:
         minis_query = minis_query.filter(Miniature.range >= min_range)
+    if collection:
+        minis_query = minis_query.join(CollectionItem)
 
     # Sorting
     sort_by = request.args.get('sort_by', 'normalized_power_score')
@@ -330,6 +345,90 @@ def delete_shopping_list_item(item_id):
     session.commit()
     session.close()
     return jsonify({'message': 'Item removed from shopping list'})
+
+@app.route('/api/collection', methods=['GET'])
+def get_collection():
+    session = Session()
+    items = session.query(CollectionItem).options(
+        joinedload(CollectionItem.miniature).joinedload(Miniature.factions)
+    ).all()
+    
+    result = []
+    for item in items:
+        result.append({
+            'id': item.id,
+            'quantity': item.quantity,
+            'miniature': {
+                'id': item.miniature.id,
+                'name': item.miniature.name,
+                'image_url': item.miniature.image_url,
+                'set_name': item.miniature.set_name,
+                'rank': item.miniature.rank,
+                'point_cost': item.miniature.point_cost,
+                'source_url': item.miniature.source_url,
+                'factions': [f.name for f in item.miniature.factions],
+                'collector_number': item.miniature.collector_number
+            }
+        })
+    session.close()
+    return jsonify(result)
+
+@app.route('/api/collection', methods=['POST'])
+def add_to_collection():
+    data = request.get_json()
+    miniature_id = data.get('miniature_id')
+    quantity = data.get('quantity', 1)
+
+    if not miniature_id:
+        return jsonify({'error': 'Miniature ID is required'}), 400
+
+    session = Session()
+    
+    existing_item = session.query(CollectionItem).filter_by(miniature_id=miniature_id).first()
+    if existing_item:
+        existing_item.quantity += quantity
+    else:
+        new_item = CollectionItem(miniature_id=miniature_id, quantity=quantity)
+        session.add(new_item)
+    
+    session.commit()
+    session.close()
+    
+    return jsonify({'message': 'Item added to collection'}), 201
+
+@app.route('/api/collection/<int:miniature_id>', methods=['PUT'])
+def update_collection_item(miniature_id):
+    data = request.get_json()
+    quantity = data.get('quantity')
+
+    if quantity is None:
+        return jsonify({'error': 'Quantity is required'}), 400
+
+    session = Session()
+    item = session.query(CollectionItem).filter_by(miniature_id=miniature_id).first()
+
+    if not item:
+        session.close()
+        return jsonify({'error': 'Item not found'}), 404
+
+    item.quantity = quantity
+    session.commit()
+    session.close()
+    return jsonify({'message': 'Item updated successfully'})
+
+@app.route('/api/collection/<int:miniature_id>', methods=['DELETE'])
+def delete_collection_item(miniature_id):
+    session = Session()
+    item = session.query(CollectionItem).filter_by(miniature_id=miniature_id).first()
+
+    if not item:
+        session.close()
+        return jsonify({'error': 'Item not found'}), 404
+
+    session.delete(item)
+    session.commit()
+    session.close()
+    return jsonify({'message': 'Item removed from collection'})
 
 
 if __name__ == '__main__':

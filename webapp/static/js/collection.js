@@ -121,7 +121,7 @@ async function fetchMiniatures() {
     const sort_by = document.getElementById('sortFilter').value;
     const ability_filter = document.getElementById('abilityFilter').value;
 
-    let url = '/api/minis?';
+    let url = '/api/minis?collection=true&';
     if (name) url += `name=${encodeURIComponent(name)}&`;
     factions.forEach(f => url += `faction=${encodeURIComponent(f)}&`);
     if (set_name) url += `set_name=${encodeURIComponent(set_name)}&`;
@@ -142,18 +142,24 @@ async function fetchMiniatures() {
     try {
         const response = await fetch(url);
         const miniatures = await response.json();
-        displayMiniatures(miniatures);
+        const collectionResponse = await fetch('/api/collection');
+        const collection = await collectionResponse.json();
+        const collectionMap = {};
+        collection.forEach(item => {
+            collectionMap[item.miniature.id] = item.quantity;
+        });
+        displayMiniatures(miniatures, collectionMap);
     } catch (error) {
         console.error('Error fetching miniatures:', error);
     }
 }
 
-function displayMiniatures(miniatures) {
+function displayMiniatures(miniatures, collectionMap) {
     const container = document.getElementById('miniaturesContainer');
     container.innerHTML = ''; // Clear previous results
 
     if (miniatures.length === 0) {
-        container.innerHTML = '<p>No miniatures found matching your criteria.</p>';
+        container.innerHTML = '<p>No miniatures found in your collection.</p>';
         return;
     }
 
@@ -193,79 +199,57 @@ function displayMiniatures(miniatures) {
                 <h3>Click Stats:</h3>
                 ${clicksHtml}
             </div>
+            <p><strong>Quantity:</strong> <input type="number" class="quantity-input" data-mini-id="${mini.id}" value="${collectionMap[mini.id] || 1}" min="1"></p>
             <p><a href="${mini.source_url}" target="_blank">Source URL</a></p>
-            <button class="add-to-list-btn" data-mini-id="${mini.id}">Add to Shopping List</button>
-            <button class="add-to-collection-btn" data-mini-id="${mini.id}">Add to Collection</button>
+            <button class="remove-from-collection-btn" data-mini-id="${mini.id}">Remove from Collection</button>
         `;
         container.appendChild(card);
     });
 
     // Add event listeners to the buttons
-    document.querySelectorAll('.add-to-list-btn').forEach(button => {
+    document.querySelectorAll('.remove-from-collection-btn').forEach(button => {
         button.addEventListener('click', event => {
             const miniId = event.target.dataset.miniId;
-            addToShoppingList(miniId, event.target);
+            removeFromCollection(miniId, event.target);
         });
     });
 
-    document.querySelectorAll('.add-to-collection-btn').forEach(button => {
-        button.addEventListener('click', event => {
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', event => {
             const miniId = event.target.dataset.miniId;
-            addToCollection(miniId, event.target);
+            const quantity = event.target.value;
+            updateQuantity(miniId, quantity);
         });
     });
 }
 
-function addToCollection(miniatureId, buttonElement) {
-    fetch('/api/collection', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ miniature_id: miniatureId }),
+function removeFromCollection(miniatureId, buttonElement) {
+    fetch(`/api/collection/${miniatureId}`, {
+        method: 'DELETE',
     })
     .then(response => response.json())
     .then(data => {
         console.log(data.message);
-        buttonElement.textContent = 'Added!';
-        buttonElement.disabled = true;
-        setTimeout(() => {
-            buttonElement.textContent = 'Add to Collection';
-            buttonElement.disabled = false;
-        }, 2000);
+        buttonElement.closest('.miniature-card').remove();
     })
     .catch((error) => {
         console.error('Error:', error);
-        buttonElement.textContent = 'Error!';
-        setTimeout(() => {
-            buttonElement.textContent = 'Add to Collection';
-        }, 2000);
     });
 }
 
-function addToShoppingList(miniatureId, buttonElement) {
-    fetch('/api/shopping-list', {
-        method: 'POST',
+function updateQuantity(miniatureId, quantity) {
+    fetch(`/api/collection/${miniatureId}`, {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ miniature_id: miniatureId }),
+        body: JSON.stringify({ quantity: quantity }),
     })
     .then(response => response.json())
     .then(data => {
         console.log(data.message);
-        buttonElement.textContent = 'Added!';
-        buttonElement.disabled = true;
-        setTimeout(() => {
-            buttonElement.textContent = 'Add to Shopping List';
-            buttonElement.disabled = false;
-        }, 2000);
     })
     .catch((error) => {
         console.error('Error:', error);
-        buttonElement.textContent = 'Error!';
-        setTimeout(() => {
-            buttonElement.textContent = 'Add to Shopping List';
-        }, 2000);
     });
 }
