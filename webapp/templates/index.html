@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Mage Knight Miniatures Database</h1>
-    <a href="/shopping-list">Go to Shopping List</a> | <a href="/collection">My Collection</a>
+    <a href="/shopping-list">Go to Shopping List</a> | <a href="/collection">My Collection</a> <button id="theme-toggle">Toggle Dark Mode</button>
 
     <div class="filters">
         <input type="text" id="nameFilter" placeholder="Filter by Name">
@@ -37,5 +37,6 @@
     <div id="miniaturesContainer"></div>
 
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dark_mode.js') }}"></script>
 </body>
 </html>

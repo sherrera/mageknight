@@ -1,19 +1,60 @@
+:root {
+    --background-color-light: #f4f4f4;
+    --text-color-light: #333;
+    --card-background-color-light: #fff;
+    --header-color-light: #333;
+    --link-color-light: #007bff;
+    --link-hover-color-light: #0056b3;
+    --filter-background-color-light: #fff;
+    --faction-tag-background-color-light: #e2e6ea;
+    --faction-tag-color-light: #007bff;
+    --faction-tag-hover-background-color-light: #dae0e5;
+    --faction-tag-hover-color-light: #0056b3;
+
+
+    --background-color-dark: #121212;
+    --text-color-dark: #e0e0e0;
+    --card-background-color-dark: #1e1e1e;
+    --header-color-dark: #e0e0e0;
+    --link-color-dark: #bb86fc;
+    --link-hover-color-dark: #9e67e4;
+    --filter-background-color-dark: #1e1e1e;
+    --faction-tag-background-color-dark: #333;
+    --faction-tag-color-dark: #bb86fc;
+    --faction-tag-hover-background-color-dark: #444;
+    --faction-tag-hover-color-dark: #9e67e4;
+}
+
+body.dark-mode {
+    --background-color: var(--background-color-dark);
+    --text-color: var(--text-color-dark);
+    --card-background-color: var(--card-background-color-dark);
+    --header-color: var(--header-color-dark);
+    --link-color: var(--link-color-dark);
+    --link-hover-color: var(--link-hover-color-dark);
+    --filter-background-color: var(--filter-background-color-dark);
+    --faction-tag-background-color: var(--faction-tag-background-color-dark);
+    --faction-tag-color: var(--faction-tag-color-dark);
+    --faction-tag-hover-background-color: var(--faction-tag-hover-background-color-dark);
+    --faction-tag-hover-color: var(--faction-tag-hover-color-dark);
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: var(--background-color, var(--background-color-light));
+    color: var(--text-color, var(--text-color-light));
 }
 
 h1 {
-    color: #333;
+    color: var(--header-color, var(--header-color-light));
     text-align: center;
 }
 
 .filters {
     margin-bottom: 20px;
     padding: 15px;
-    background-color: #fff;
+    background-color: var(--filter-background-color, var(--filter-background-color-light));
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     display: flex;
@@ -30,14 +71,14 @@ h1 {
 }
 
 .filters button {
-    background-color: #007bff;
+    background-color: var(--link-color, var(--link-color-light));
     color: white;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
 }
 
 .filters button:hover {
-    background-color: #0056b3;
+    background-color: var(--link-hover-color, var(--link-hover-color-light));
 }
 
 #miniaturesContainer {
@@ -47,7 +88,7 @@ h1 {
 }
 
 .miniature-card {
-    background-color: #fff;
+    background-color: var(--card-background-color, var(--card-background-color-light));
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     overflow: hidden;
@@ -66,7 +107,7 @@ h1 {
     font-size: 1.2em;
     margin-top: 0;
     margin-bottom: 5px;
-    color: #007bff;
+    color: var(--link-color, var(--link-color-light));
 }
 
 .miniature-card p {
@@ -108,8 +149,8 @@ h1 {
 
 .faction-tag {
     display: inline-block;
-    background-color: #e2e6ea;
-    color: #007bff;
+    background-color: var(--faction-tag-background-color, var(--faction-tag-background-color-light));
+    color: var(--faction-tag-color, var(--faction-tag-color-light));
     padding: 4px 8px;
     border-radius: 4px;
     margin: 2px;
@@ -119,8 +160,8 @@ h1 {
 }
 
 .faction-tag:hover {
-    background-color: #dae0e5;
-    color: #0056b3;
+    background-color: var(--faction-tag-hover-background-color, var(--faction-tag-hover-background-color-light));
+    color: var(--faction-tag-hover-color, var(--faction-tag-hover-color-light));
 }
 
 /* Shopping List Styles */
@@ -139,7 +180,7 @@ h1 {
     display: flex;
     align-items: flex-start; /* Align items to the top */
     justify-content: space-between;
-    background-color: #fff;
+    background-color: var(--card-background-color, var(--card-background-color-light));
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 15px;
@@ -163,7 +204,7 @@ h1 {
 
 .shopping-list-item-col-2 h3 {
     margin: 0 0 10px 0;
-    color: #007bff;
+    color: var(--link-color, var(--link-color-light));
 }
 
 .shopping-list-item-col-2 p {
@@ -210,7 +251,7 @@ h1 {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    background-color: #007bff;
+    background-color: var(--link-color, var(--link-color-light));
     color: white;
     transition: background-color 0.2s ease-in-out;
 }
