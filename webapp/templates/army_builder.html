@@ -3,13 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mage Knight Miniatures</title>
+    <title>Army Builder</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Mage Knight Miniatures Database</h1>
-    <a href="/shopping-list">Go to Shopping List</a> | <a href="/collection">My Collection</a> | <a href="/armies">Armies</a> <button id="theme-toggle">Toggle Dark Mode</button>
+    <h1 id="armyName"></h1>
+    <h2 id="armyCost">Total Cost: 0</h2>
+    <p id="armyDescription"></p>
+    <a href="/armies">Back to Armies</a> <button id="theme-toggle">Toggle Dark Mode</button>
 
+    <h2>Army Miniatures</h2>
+    <div id="armyMiniaturesContainer"></div>
+
+    <hr>
+
+    <h2>Add Miniatures</h2>
     <div class="filters">
         <input type="text" id="nameFilter" placeholder="Filter by Name">
         <select id="factionFilter" multiple size="5"></select>
@@ -36,7 +44,10 @@
 
     <div id="miniaturesContainer"></div>
 
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        const armyId = {{ army_id }};
+    </script>
+    <script src="{{ url_for('static', filename='js/army_builder.js') }}"></script>
     <script src="{{ url_for('static', filename='js/dark_mode.js') }}"></script>
 </body>
 </html>

@@ -99,6 +99,8 @@ class ShoppingListItem(Base):
 
     miniature = relationship('Miniature')
 
+from sqlalchemy.sql import func
+
 class CollectionItem(Base):
     __tablename__ = 'collection_items'
     id = Column(Integer, primary_key=True)
@@ -106,6 +108,26 @@ class CollectionItem(Base):
     quantity = Column(Integer, nullable=False, default=1)
 
     miniature = relationship('Miniature')
+
+class Army(Base):
+    __tablename__ = 'armies'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    description = Column(String(1024))
+    created_at = Column(String, default=lambda: datetime.utcnow().isoformat())
+
+    miniatures = relationship('ArmyMiniature', back_populates='army')
+
+class ArmyMiniature(Base):
+    __tablename__ = 'army_miniatures'
+    id = Column(Integer, primary_key=True)
+    army_id = Column(Integer, ForeignKey('armies.id'), nullable=False)
+    miniature_id = Column(Integer, ForeignKey('miniatures.id'), nullable=False)
+    quantity = Column(Integer, nullable=False, default=1)
+
+    army = relationship('Army', back_populates='miniatures')
+    miniature = relationship('Miniature')
+
 
 # --- End of Models ---
 
@@ -124,6 +146,14 @@ def shopping_list_page():
 @app.route('/collection')
 def collection_page():
     return render_template('collection.html')
+
+@app.route('/armies')
+def armies_page():
+    return render_template('armies.html')
+
+@app.route('/armies/<int:army_id>')
+def army_builder_page(army_id):
+    return render_template('army_builder.html', army_id=army_id)
 
 # --- API Endpoints ---
 
@@ -429,6 +459,150 @@ def delete_collection_item(miniature_id):
     session.commit()
     session.close()
     return jsonify({'message': 'Item removed from collection'})
+
+@app.route('/api/armies', methods=['GET'])
+def get_armies():
+    session = Session()
+    armies = session.query(Army).options(
+        joinedload(Army.miniatures).joinedload(ArmyMiniature.miniature)
+    ).order_by(Army.created_at.desc()).all()
+    result = []
+    for army in armies:
+        result.append({
+            'id': army.id,
+            'name': army.name,
+            'description': army.description,
+            'created_at': army.created_at
+        })
+    session.close()
+    return jsonify(result)
+
+@app.route('/api/armies', methods=['POST'])
+def create_army():
+    data = request.get_json()
+    name = data.get('name')
+    description = data.get('description')
+
+    if not name:
+        return jsonify({'error': 'Army name is required'}), 400
+
+    session = Session()
+    new_army = Army(name=name, description=description)
+    session.add(new_army)
+    session.commit()
+    
+    army_id = new_army.id
+    session.close()
+    
+    return jsonify({'message': 'Army created successfully', 'id': army_id}), 201
+
+@app.route('/api/armies/<int:army_id>', methods=['GET'])
+def get_army(army_id):
+    session = Session()
+    army = session.query(Army).options(
+        joinedload(Army.miniatures).joinedload(ArmyMiniature.miniature).joinedload(Miniature.factions)
+    ).get(army_id)
+
+    if not army:
+        session.close()
+        return jsonify({'error': 'Army not found'}), 404
+
+    miniatures = []
+    for am in army.miniatures:
+        miniatures.append({
+            'id': am.miniature.id,
+            'name': am.miniature.name,
+            'image_url': am.miniature.image_url,
+            'quantity': am.quantity,
+            'point_cost': am.miniature.point_cost
+        })
+
+    result = {
+        'id': army.id,
+        'name': army.name,
+        'description': army.description,
+        'created_at': army.created_at,
+        'miniatures': miniatures
+    }
+    session.close()
+    return jsonify(result)
+
+@app.route('/api/armies/<int:army_id>', methods=['DELETE'])
+def delete_army(army_id):
+    session = Session()
+    army = session.query(Army).get(army_id)
+
+    if not army:
+        session.close()
+        return jsonify({'error': 'Army not found'}), 404
+
+    # Delete all miniatures associated with the army
+    session.query(ArmyMiniature).filter_by(army_id=army_id).delete()
+
+    session.delete(army)
+    session.commit()
+    session.close()
+    return jsonify({'message': 'Army deleted successfully'})
+
+@app.route('/api/armies/<int:army_id>/miniatures', methods=['POST'])
+def add_miniature_to_army(army_id):
+    data = request.get_json()
+    miniature_id = data.get('miniature_id')
+    quantity = data.get('quantity', 1)
+
+    if not miniature_id:
+        return jsonify({'error': 'Miniature ID is required'}), 400
+
+    session = Session()
+    
+    existing_item = session.query(ArmyMiniature).filter_by(army_id=army_id, miniature_id=miniature_id).first()
+    if existing_item:
+        existing_item.quantity += quantity
+    else:
+        new_item = ArmyMiniature(army_id=army_id, miniature_id=miniature_id, quantity=quantity)
+        session.add(new_item)
+    
+    session.commit()
+    session.close()
+    
+    return jsonify({'message': 'Miniature added to army'}), 201
+
+@app.route('/api/armies/<int:army_id>/miniatures/<int:miniature_id>', methods=['DELETE'])
+def remove_miniature_from_army(army_id, miniature_id):
+    session = Session()
+    item = session.query(ArmyMiniature).filter_by(army_id=army_id, miniature_id=miniature_id).first()
+
+    if not item:
+        session.close()
+        return jsonify({'error': 'Item not found'}), 404
+
+    session.delete(item)
+    session.commit()
+    session.close()
+    return jsonify({'message': 'Item removed from army'})
+
+@app.route('/api/armies/<int:army_id>/miniatures/<int:miniature_id>', methods=['PUT'])
+def update_army_miniature(army_id, miniature_id):
+    data = request.get_json()
+    quantity = data.get('quantity')
+
+    if quantity is None:
+        return jsonify({'error': 'Quantity is required'}), 400
+
+    session = Session()
+    item = session.query(ArmyMiniature).filter_by(army_id=army_id, miniature_id=miniature_id).first()
+
+    if not item:
+        session.close()
+        return jsonify({'error': 'Item not found'}), 404
+
+    if quantity <= 0:
+        session.delete(item)
+    else:
+        item.quantity = quantity
+    session.commit()
+    session.close()
+    return jsonify({'message': 'Item updated successfully'})
 
 
 if __name__ == '__main__':
