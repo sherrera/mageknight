@@ -52,6 +52,8 @@ function displayArmyMiniatures(miniatures) {
             <img src="${mini.image_url}" alt="${mini.name}">
             <h4>${mini.name}</h4>
             <p>Quantity: ${mini.quantity}</p>
+            ${mini.collection_quantity > 0 ? `<p>In Collection: ${mini.collection_quantity}</p>` : ''}
+            ${mini.shopping_list_quantity > 0 ? `<p>In Shopping List: ${mini.shopping_list_quantity}</p>` : ''}
             <button class="btn-delete" data-mini-id="${mini.id}" data-quantity="${mini.quantity}">Remove</button>
         `;
         container.appendChild(card);

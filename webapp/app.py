@@ -538,13 +538,19 @@ def get_army(army_id):
 
     miniatures = []
     for am in army.miniatures:
-        miniatures.append({
+        collection_item = session.query(CollectionItem).filter_by(miniature_id=am.miniature.id).first()
+        shopping_list_item = session.query(ShoppingListItem).filter_by(miniature_id=am.miniature.id).first()
+
+        miniature_data = {
             'id': am.miniature.id,
             'name': am.miniature.name,
             'image_url': am.miniature.image_url,
             'quantity': am.quantity,
-            'point_cost': am.miniature.point_cost
-        })
+            'point_cost': am.miniature.point_cost,
+            'collection_quantity': collection_item.quantity if collection_item else 0,
+            'shopping_list_quantity': shopping_list_item.quantity if shopping_list_item else 0
+        }
+        miniatures.append(miniature_data)
 
     result = {
         'id': army.id,
