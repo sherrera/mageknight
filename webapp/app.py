@@ -468,8 +468,11 @@ def get_armies():
     ).order_by(Army.created_at.desc()).all()
     result = []
     for army in armies:
-        miniature_names = [{'name': am.miniature.name, 'quantity': am.quantity} for am in army.miniatures]
-        total_cost = sum(am.miniature.point_cost * am.quantity for am in army.miniatures)
+        miniature_names = []
+        total_cost = 0
+        for am in army.miniatures:
+            miniature_names.append({'name': am.miniature.name, 'quantity': am.quantity})
+            total_cost += am.miniature.point_cost * am.quantity
         result.append({
             'id': army.id,
             'name': army.name,
@@ -499,6 +502,28 @@ def create_army():
     session.close()
     
     return jsonify({'message': 'Army created successfully', 'id': army_id}), 201
+
+@app.route('/api/armies/<int:army_id>', methods=['PUT'])
+def update_army(army_id):
+    data = request.get_json()
+    name = data.get('name')
+    description = data.get('description')
+
+    session = Session()
+    army = session.query(Army).get(army_id)
+
+    if not army:
+        session.close()
+        return jsonify({'error': 'Army not found'}), 404
+
+    if name:
+        army.name = name
+    if description is not None: # Allow description to be set to null
+        army.description = description
+    
+    session.commit()
+    session.close()
+    return jsonify({'message': 'Army updated successfully'})
 
 @app.route('/api/armies/<int:army_id>', methods=['GET'])
 def get_army(army_id):
