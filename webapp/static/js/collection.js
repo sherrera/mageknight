@@ -160,10 +160,15 @@ function displayMiniatures(miniatures, collectionMap) {
 
     if (miniatures.length === 0) {
         container.innerHTML = '<p>No miniatures found in your collection.</p>';
+        document.getElementById('total-minis-display').textContent = 'Total Minis: 0';
         return;
     }
 
+    let totalMinis = 0;
+
     miniatures.forEach(mini => {
+        const quantity = collectionMap[mini.id] || 1;
+        totalMinis += quantity;
         const card = document.createElement('div');
         card.className = 'miniature-card';
 
@@ -199,12 +204,14 @@ function displayMiniatures(miniatures, collectionMap) {
                 <h3>Click Stats:</h3>
                 ${clicksHtml}
             </div>
-            <p><strong>Quantity:</strong> <input type="number" class="quantity-input" data-mini-id="${mini.id}" value="${collectionMap[mini.id] || 1}" min="1"></p>
+            <p><strong>Quantity:</strong> <input type="number" class="quantity-input" data-mini-id="${mini.id}" value="${quantity}" min="1"></p>
             <p><a href="${mini.source_url}" target="_blank">Source URL</a></p>
             <button class="remove-from-collection-btn" data-mini-id="${mini.id}">Remove from Collection</button>
         `;
         container.appendChild(card);
     });
+
+    document.getElementById('total-minis-display').textContent = `Total Minis: ${totalMinis}`;
 
     // Add event listeners to the buttons
     document.querySelectorAll('.remove-from-collection-btn').forEach(button => {
