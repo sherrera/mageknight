@@ -468,11 +468,15 @@ def get_armies():
     ).order_by(Army.created_at.desc()).all()
     result = []
     for army in armies:
+        miniature_names = [{'name': am.miniature.name, 'quantity': am.quantity} for am in army.miniatures]
+        total_cost = sum(am.miniature.point_cost * am.quantity for am in army.miniatures)
         result.append({
             'id': army.id,
             'name': army.name,
             'description': army.description,
-            'created_at': army.created_at
+            'created_at': army.created_at,
+            'miniature_names': miniature_names,
+            'total_cost': total_cost
         })
     session.close()
     return jsonify(result)

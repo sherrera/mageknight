@@ -26,12 +26,31 @@ function displayArmies(armies) {
     armies.forEach(army => {
         const card = document.createElement('div');
         card.className = 'army-card';
+        card.dataset.armyId = army.id;
         card.innerHTML = `
-            <h3>${army.name}</h3>
-            <p>${army.description || ''}</p>
-            <p>Created at: ${new Date(army.created_at).toLocaleString()}</p>
-            <a href="/armies/${army.id}" class="btn">Build</a>
-            <button class="btn-delete" data-army-id="${army.id}">Delete</button>
+            <div class="army-display-mode">
+                <h3 class="army-name-display">${army.name}</h3>
+                <p class="army-description-display">${army.description || ''}</p>
+                <p><strong>Total Cost:</strong> ${army.total_cost}</p>
+                <p><strong>Miniatures:</strong>
+                    <ul class="miniature-list">
+                        ${army.miniature_names && army.miniature_names.length > 0 ? 
+                            army.miniature_names.map(mini => `<li>${mini.name}${mini.quantity > 1 ? ` (${mini.quantity})` : ''}</li>`).join('') 
+                            : '<li>None</li>'
+                        }
+                    </ul>
+                </p>
+                <p>Created at: ${new Date(army.created_at).toLocaleString()}</p>
+                <a href="/armies/${army.id}" class="btn">Build</a>
+                <button class="btn-edit" data-army-id="${army.id}">Edit</button>
+                <button class="btn-delete" data-army-id="${army.id}">Delete</button>
+            </div>
+            <div class="army-edit-mode" style="display:none;">
+                <input type="text" class="army-name-edit" value="${army.name}">
+                <textarea class="army-description-edit">${army.description || ''}</textarea>
+                <button class="btn-save" data-army-id="${army.id}">Save</button>
+                <button class="btn-cancel" data-army-id="${army.id}">Cancel</button>
+            </div>
         `;
         container.appendChild(card);
     });
@@ -42,6 +61,67 @@ function displayArmies(armies) {
             deleteArmy(armyId);
         });
     });
+
+    document.querySelectorAll('.btn-edit').forEach(button => {
+        button.addEventListener('click', event => {
+            const armyId = event.target.dataset.armyId;
+            editArmy(armyId);
+        });
+    });
+
+    document.querySelectorAll('.btn-save').forEach(button => {
+        button.addEventListener('click', event => {
+            const armyId = event.target.dataset.armyId;
+            saveArmy(armyId);
+        });
+    });
+
+    document.querySelectorAll('.btn-cancel').forEach(button => {
+        button.addEventListener('click', event => {
+            const armyId = event.target.dataset.armyId;
+            cancelEdit(armyId);
+        });
+    });
+}
+
+function editArmy(armyId) {
+    const card = document.querySelector(`.army-card[data-army-id="${armyId}"]`);
+    card.querySelector('.army-display-mode').style.display = 'none';
+    card.querySelector('.army-edit-mode').style.display = 'block';
+}
+
+async function saveArmy(armyId) {
+    const card = document.querySelector(`.army-card[data-army-id="${armyId}"]`);
+    const newName = card.querySelector('.army-name-edit').value;
+    const newDescription = card.querySelector('.army-description-edit').value;
+
+    try {
+        const response = await fetch(`/api/armies/${armyId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: newName, description: newDescription }),
+        });
+
+        if (response.ok) {
+            fetchArmies(); // Re-fetch all armies to update the display
+        } else {
+            const errorData = await response.json();
+            alert(`Error saving army: ${errorData.error}`);
+        }
+    } catch (error) {
+        console.error('Error saving army:', error);
+    }
+}
+
+function cancelEdit(armyId) {
+    const card = document.querySelector(`.army-card[data-army-id="${armyId}"]`);
+    card.querySelector('.army-display-mode').style.display = 'block';
+    card.querySelector('.army-edit-mode').style.display = 'none';
+    // Revert input values to original (will happen on re-fetch if save was successful)
+    // For immediate revert without re-fetch, you'd store original values
+    // For now, just hide edit mode
 }
 
 async function createArmy() {
