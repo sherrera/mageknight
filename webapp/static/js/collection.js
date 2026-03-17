@@ -150,11 +150,18 @@ async function fetchMiniatures() {
         });
         // fetch metrics concurrently
         let metrics = null;
+        let metricsStatusEl = document.getElementById('metrics-status');
         try {
             const metricsResp = await fetch('/api/minis/metrics');
-            if (metricsResp.ok) metrics = await metricsResp.json();
+            if (metricsResp.ok) {
+                metrics = await metricsResp.json();
+                if (metricsStatusEl) { metricsStatusEl.textContent = 'Metrics: loaded'; metricsStatusEl.style.color = 'green'; }
+            } else {
+                if (metricsStatusEl) { metricsStatusEl.textContent = 'Metrics: not available'; metricsStatusEl.style.color = 'orange'; }
+            }
         } catch (e) {
             console.warn('Metrics not available:', e);
+            if (metricsStatusEl) { metricsStatusEl.textContent = 'Metrics: failed to load'; metricsStatusEl.style.color = 'red'; }
         }
         displayMiniatures(miniatures, collectionMap, metrics);
     } catch (error) {
