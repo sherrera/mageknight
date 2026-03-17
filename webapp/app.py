@@ -3,6 +3,8 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Float
 from sqlalchemy.orm import sessionmaker, relationship, joinedload
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+import os
+import json
 
 app = Flask(__name__)
 
@@ -273,6 +275,20 @@ def get_minis():
 
     session.close()
     return jsonify(minis_data)
+
+
+@app.route('/api/minis/metrics')
+def get_minis_metrics():
+    """Serve precomputed metrics JSON if present, else 404."""
+    metrics_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'minis_metrics.json')
+    if not os.path.exists(metrics_path):
+        return jsonify({'error': 'Metrics not generated'}), 404
+    try:
+        with open(metrics_path, 'r') as f:
+            data = json.load(f)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': f'Failed to read metrics: {e}'}), 500
 
 @app.route('/api/distinct_values')
 def get_distinct_values():

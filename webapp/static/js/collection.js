@@ -148,13 +148,21 @@ async function fetchMiniatures() {
         collection.forEach(item => {
             collectionMap[item.miniature.id] = item.quantity;
         });
-        displayMiniatures(miniatures, collectionMap);
+        // fetch metrics concurrently
+        let metrics = null;
+        try {
+            const metricsResp = await fetch('/api/minis/metrics');
+            if (metricsResp.ok) metrics = await metricsResp.json();
+        } catch (e) {
+            console.warn('Metrics not available:', e);
+        }
+        displayMiniatures(miniatures, collectionMap, metrics);
     } catch (error) {
         console.error('Error fetching miniatures:', error);
     }
 }
 
-function displayMiniatures(miniatures, collectionMap) {
+function displayMiniatures(miniatures, collectionMap, metrics) {
     const container = document.getElementById('miniaturesContainer');
     container.innerHTML = ''; // Clear previous results
 
@@ -200,6 +208,7 @@ function displayMiniatures(miniatures, collectionMap) {
             <p><strong>FRQ:</strong> ${mini.frq}</p>
             <p><strong>Arc:</strong> ${mini.arc}</p>
             <p><strong>Range:</strong> ${mini.range} (${mini.range_targets} targets)</p>
+             <div class="stat-chips" id="stat-chips-${mini.id}"></div>
             <div class="clicks-data">
                 <h3>Click Stats:</h3>
                 ${clicksHtml}
@@ -209,9 +218,50 @@ function displayMiniatures(miniatures, collectionMap) {
             <button class="remove-from-collection-btn" data-mini-id="${mini.id}">Remove from Collection</button>
         `;
         container.appendChild(card);
+
+        // render stat chips if metrics available
+        if (metrics && metrics.minis) {
+            const m = metrics.minis[String(mini.id)];
+            if (m) {
+                const chipContainer = document.getElementById(`stat-chips-${mini.id}`);
+                const stats = ['attack','defense','speed','damage','range'];
+                stats.forEach(s => {
+                    const sData = m.stats[s];
+                    const chip = document.createElement('span');
+                    chip.className = 'stat-chip';
+                    if (!sData) {
+                        chip.textContent = `${s}: -`;
+                        chip.style.background = '#ddd';
+                    } else {
+                        chip.textContent = `${s}: ${sData.value}`;
+                        const z = sData.point_bin_z ?? sData.global_z ?? 0;
+                        // simple color mapping
+                        if (z >= 1.5) chip.style.background = '#196127';
+                        else if (z >= 0.5) chip.style.background = '#7bc96f';
+                        else if (z <= -1.5) chip.style.background = '#8b0000';
+                        else if (z <= -0.5) chip.style.background = '#ff7b7b';
+                        else chip.style.background = '#c6e48b';
+
+                        // attach click to open modal with more metrics
+                        chip.style.cursor = 'pointer';
+                        chip.addEventListener('click', () => openMiniModal(mini, m));
+                    }
+                    chipContainer.appendChild(chip);
+                });
+            }
+        }
     });
 
     document.getElementById('total-minis-display').textContent = `Total Minis: ${totalMinis}`;
+
+    // create modal container
+    if (!document.getElementById('mini-modal')) {
+        const modal = document.createElement('div');
+        modal.id = 'mini-modal';
+        modal.className = 'mini-modal';
+        modal.style.display = 'none';
+        document.body.appendChild(modal);
+    }
 
     // Add event listeners to the buttons
     document.querySelectorAll('.remove-from-collection-btn').forEach(button => {
