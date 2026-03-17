@@ -160,6 +160,7 @@ async function fetchMiniatures() {
     const min_range = document.getElementById('minRangeFilter').value;
     const sort_by = document.getElementById('sortFilter').value;
     const ability_filter = document.getElementById('abilityFilter').value;
+    const collectionOnly = document.getElementById('collectionFilter').checked;
 
     let url = '/api/minis?';
     if (name) url += `name=${encodeURIComponent(name)}&`;
@@ -175,6 +176,7 @@ async function fetchMiniatures() {
     if (min_range) url += `min_range=${min_range}&`;
     if (sort_by) url += `sort_by=${sort_by}&`;
     if (ability_filter) url += `ability=${encodeURIComponent(ability_filter)}&`;
+    if (collectionOnly) url += `collection=true&`;
 
     url = url.slice(0, -1);
 

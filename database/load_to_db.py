@@ -205,7 +205,7 @@ def verify_abilities_in_db():
         session.close()
 
 if __name__ == "__main__":
-    cleaned_factions_json_path = os.path.join(os.path.dirname(__file__), '..', 'minis_factions_cleaned.json')
-    load_data_to_db(cleaned_factions_json_path)
+    valued_json_path = os.path.join(os.path.dirname(__file__), '..', 'minis_valued.json')
+    load_data_to_db(valued_json_path)
     verify_abilities_in_db()
 

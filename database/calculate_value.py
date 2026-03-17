@@ -156,6 +156,36 @@ def calculate_scores(input_file, output_file):
         
         updated_miniatures.append(mini)
 
+    # --- Second Pass: Normalization ---
+    power_scores = [m['power_score'] for m in updated_miniatures if m.get('power_score') is not None]
+    efficiency_scores = [m['efficiency_score'] for m in updated_miniatures if m.get('efficiency_score') is not None]
+
+    min_power = min(power_scores) if power_scores else 0
+    max_power = max(power_scores) if power_scores else 0
+    min_efficiency = min(efficiency_scores) if efficiency_scores else 0
+    max_efficiency = max(efficiency_scores) if efficiency_scores else 0
+
+    for mini in updated_miniatures:
+        power_score = mini.get('power_score')
+        if power_score is not None:
+            if max_power > min_power:
+                normalized_power = 1 + 99 * (power_score - min_power) / (max_power - min_power)
+            else:
+                normalized_power = 50  # Default to 50 if all values are the same
+            mini['normalized_power_score'] = round(normalized_power, 2)
+        else:
+            mini['normalized_power_score'] = None
+
+        efficiency_score = mini.get('efficiency_score')
+        if efficiency_score is not None:
+            if max_efficiency > min_efficiency:
+                normalized_efficiency = 1 + 99 * (efficiency_score - min_efficiency) / (max_efficiency - min_efficiency)
+            else:
+                normalized_efficiency = 50 # Default to 50 if all values are the same
+            mini['normalized_efficiency_score'] = round(normalized_efficiency, 2)
+        else:
+            mini['normalized_efficiency_score'] = None
+
     # Replace the old miniatures list with the updated one
     data['miniatures'] = updated_miniatures
 

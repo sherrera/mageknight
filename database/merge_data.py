@@ -1,43 +1,43 @@
 import json
 import os
 
-def merge_data(main_file, rebellion_file, output_file):
-    """Merges rebellion data into main data, prioritizing rebellion data for duplicates."""
-    print(f"Reading main data from {main_file}...")
+def merge_data(file1_path, file2_path, output_file):
+    """Merges two JSON data files, prioritizing data from the second file for duplicates."""
+    print(f"Reading data from {file1_path}...")
     try:
-        with open(main_file, 'r') as f:
-            main_data = json.load(f)
+        with open(file1_path, 'r') as f:
+            file1_data = json.load(f)
     except FileNotFoundError:
-        print(f"Error: Main data file not found at {main_file}")
+        print(f"Error: Data file not found at {file1_path}")
         return
 
-    print(f"Reading rebellion data from {rebellion_file}...")
+    print(f"Reading data from {file2_path}...")
     try:
-        with open(rebellion_file, 'r') as f:
-            rebellion_data = json.load(f)
+        with open(file2_path, 'r') as f:
+            file2_data = json.load(f)
     except FileNotFoundError:
-        print(f"Error: Rebellion data file not found at {rebellion_file}")
+        print(f"Error: Data file not found at {file2_path}")
         return
 
-    # Create a dictionary for quick lookup of miniatures in main_data
+    # Create a dictionary for quick lookup of miniatures in file1_data
     # Key will be a tuple (set_name, collector_number)
-    main_miniatures_map = {}
-    for mini in main_data.get('miniatures', []):
+    miniatures_map = {}
+    for mini in file1_data.get('miniatures', []):
         key = (mini.get('set_name'), mini.get('collector_number'))
-        main_miniatures_map[key] = mini
+        miniatures_map[key] = mini
 
-    # Merge rebellion data
-    for rebellion_mini in rebellion_data.get('miniatures', []):
-        key = (rebellion_mini.get('set_name'), rebellion_mini.get('collector_number'))
-        main_miniatures_map[key] = rebellion_mini # This will overwrite duplicates
+    # Merge data from file2
+    for mini_from_file2 in file2_data.get('miniatures', []):
+        key = (mini_from_file2.get('set_name'), mini_from_file2.get('collector_number'))
+        miniatures_map[key] = mini_from_file2 # This will overwrite duplicates
 
     # Convert map back to list
-    merged_miniatures = list(main_miniatures_map.values())
+    merged_miniatures = list(miniatures_map.values())
 
     # Merge unique abilities (union of both sets)
-    main_abilities_set = set((a['name'], a['color']) for a in main_data.get('unique_abilities', []))
-    rebellion_abilities_set = set((a['name'], a['color']) for a in rebellion_data.get('unique_abilities', []))
-    merged_abilities = sorted([{"name": name, "color": color} for name, color in (main_abilities_set | rebellion_abilities_set)], key=lambda x: x['name'])
+    abilities_set1 = set((a['name'], a['color']) for a in file1_data.get('unique_abilities', []))
+    abilities_set2 = set((a['name'], a['color']) for a in file2_data.get('unique_abilities', []))
+    merged_abilities = sorted([{"name": name, "color": color} for name, color in (abilities_set1 | abilities_set2)], key=lambda x: x['name'])
 
     final_merged_data = {
         "unique_abilities": merged_abilities,

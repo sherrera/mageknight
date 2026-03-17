@@ -118,6 +118,7 @@ async function fetchMiniatures() {
     const min_defense = document.getElementById('minDefenseFilter').value;
     const min_damage = document.getElementById('minDamageFilter').value;
     const min_range = document.getElementById('minRangeFilter').value;
+    const min_range_targets = document.getElementById('minTargetsFilter').value;
     const sort_by = document.getElementById('sortFilter').value;
     const ability_filter = document.getElementById('abilityFilter').value;
 
@@ -133,6 +134,7 @@ async function fetchMiniatures() {
     if (min_defense) url += `min_defense=${min_defense}&`;
     if (min_damage) url += `min_damage=${min_damage}&`;
     if (min_range) url += `min_range=${min_range}&`;
+    if (min_range_targets) url += `min_range_targets=${min_range_targets}&`;
     if (sort_by) url += `sort_by=${sort_by}&`;
     if (ability_filter) url += `ability=${encodeURIComponent(ability_filter)}&`;
 

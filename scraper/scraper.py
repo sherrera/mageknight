@@ -18,6 +18,7 @@ SET_URLS = [
     "http://www.knight-ware.com/cmg/mageknight/pyramid.html",
     "http://www.knight-ware.com/cmg/mageknight/sinister.html",
     "http://www.knight-ware.com/cmg/mageknight/alpha.html",
+    "http://www.knight-ware.com/cmg/mageknight/unlim.html",
     "http://www.knight-ware.com/cmg/mageknight/ww.html",
     "http://www.knight-ware.com/cmg/mageknight/up.html",
 ]
@@ -236,6 +237,7 @@ def scrape_all(sample_size=0, focus_set=None):
         "sinister": "sinister",
         "alpha": "alpha",
         "rebelli": "alpha", # Map rebelli to alpha
+        "unlim": "alpha", # Map unlim to alpha
         "ww": "ww",
         "whirlwi": "ww", # Map whirlwi to ww
         "up": "up",

@@ -180,6 +180,7 @@ def get_minis():
     min_defense = request.args.get('min_defense', type=int)
     min_damage = request.args.get('min_damage', type=int)
     min_range = request.args.get('min_range', type=int)
+    min_range_targets = request.args.get('min_range_targets', type=int)
     collection = request.args.get('collection', type=bool)
 
     if name:
@@ -212,6 +213,8 @@ def get_minis():
         minis_query = minis_query.filter(Miniature.clicks.any(ClickStat.damage >= min_damage))
     if min_range is not None:
         minis_query = minis_query.filter(Miniature.range >= min_range)
+    if min_range_targets is not None:
+        minis_query = minis_query.filter(Miniature.range_targets >= min_range_targets)
     if collection:
         minis_query = minis_query.join(CollectionItem)
 
@@ -241,7 +244,7 @@ def get_minis():
             'arc': mini.arc,
             'range': mini.range,
             'range_targets': mini.range_targets,
-            'image_url': mini.image_url,
+            'image_url': mini.image_url or '/static/images/No_Image_Available.jpg',
             'source_url': mini.source_url,
             'power_score': mini.power_score,
             'efficiency_score': mini.efficiency_score,
@@ -304,7 +307,7 @@ def get_shopping_list():
             'miniature': {
                 'id': item.miniature.id,
                 'name': item.miniature.name,
-                'image_url': item.miniature.image_url,
+                'image_url': item.miniature.image_url or '/static/images/No_Image_Available.jpg',
                 'set_name': item.miniature.set_name,
                 'rank': item.miniature.rank,
                 'point_cost': item.miniature.point_cost,
@@ -391,7 +394,7 @@ def get_collection():
             'miniature': {
                 'id': item.miniature.id,
                 'name': item.miniature.name,
-                'image_url': item.miniature.image_url,
+                'image_url': item.miniature.image_url or '/static/images/No_Image_Available.jpg',
                 'set_name': item.miniature.set_name,
                 'rank': item.miniature.rank,
                 'point_cost': item.miniature.point_cost,
@@ -559,7 +562,7 @@ def get_army(army_id):
             'arc': am.miniature.arc,
             'range': am.miniature.range,
             'range_targets': am.miniature.range_targets,
-            'image_url': am.miniature.image_url,
+            'image_url': am.miniature.image_url or '/static/images/No_Image_Available.jpg',
             'source_url': am.miniature.source_url,
             'power_score': am.miniature.power_score,
             'efficiency_score': am.miniature.efficiency_score,
