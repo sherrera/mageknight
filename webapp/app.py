@@ -529,7 +529,13 @@ def update_army(army_id):
 def get_army(army_id):
     session = Session()
     army = session.query(Army).options(
-        joinedload(Army.miniatures).joinedload(ArmyMiniature.miniature).joinedload(Miniature.factions)
+        joinedload(Army.miniatures).joinedload(ArmyMiniature.miniature).options(
+            joinedload(Miniature.factions),
+            joinedload(Miniature.clicks).joinedload(ClickStat.speed_ability),
+            joinedload(Miniature.clicks).joinedload(ClickStat.attack_ability),
+            joinedload(Miniature.clicks).joinedload(ClickStat.defense_ability),
+            joinedload(Miniature.clicks).joinedload(ClickStat.damage_ability)
+        )
     ).get(army_id)
 
     if not army:
@@ -541,16 +547,47 @@ def get_army(army_id):
         collection_item = session.query(CollectionItem).filter_by(miniature_id=am.miniature.id).first()
         shopping_list_item = session.query(ShoppingListItem).filter_by(miniature_id=am.miniature.id).first()
 
-        miniature_data = {
+        mini_dict = {
             'id': am.miniature.id,
             'name': am.miniature.name,
-            'image_url': am.miniature.image_url,
-            'quantity': am.quantity,
+            'set_name': am.miniature.set_name,
+            'factions': [f.name for f in am.miniature.factions],
+            'rank': am.miniature.rank,
             'point_cost': am.miniature.point_cost,
+            'collector_number': am.miniature.collector_number,
+            'frq': am.miniature.frq,
+            'arc': am.miniature.arc,
+            'range': am.miniature.range,
+            'range_targets': am.miniature.range_targets,
+            'image_url': am.miniature.image_url,
+            'source_url': am.miniature.source_url,
+            'power_score': am.miniature.power_score,
+            'efficiency_score': am.miniature.efficiency_score,
+            'normalized_power_score': am.miniature.normalized_power_score,
+            'normalized_efficiency_score': am.miniature.normalized_efficiency_score,
+            'quantity': am.quantity,
             'collection_quantity': collection_item.quantity if collection_item else 0,
-            'shopping_list_quantity': shopping_list_item.quantity if shopping_list_item else 0
+            'shopping_list_quantity': shopping_list_item.quantity if shopping_list_item else 0,
+            'clicks': []
         }
-        miniatures.append(miniature_data)
+        for click in am.miniature.clicks:
+            click_dict = {
+                'click_number': click.click_number,
+                'speed': click.speed,
+                'attack': click.attack,
+                'defense': click.defense,
+                'damage': click.damage,
+                'speed_ability': click.speed_ability.name if click.speed_ability else None,
+                'speed_ability_color': click.speed_ability.color if click.speed_ability else '#FFFFFF',
+                'attack_ability': click.attack_ability.name if click.attack_ability else None,
+                'attack_ability_color': click.attack_ability.color if click.attack_ability else '#FFFFFF',
+                'defense_ability': click.defense_ability.name if click.defense_ability else None,
+                'defense_ability_color': click.defense_ability.color if click.defense_ability else '#FFFFFF',
+                'damage_ability': click.damage_ability.name if click.damage_ability else None,
+                'damage_ability_color': click.damage_ability.color if click.damage_ability else '#FFFFFF',
+            }
+            mini_dict['clicks'].append(click_dict)
+        miniatures.append(mini_dict)
 
     result = {
         'id': army.id,

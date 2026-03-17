@@ -48,9 +48,10 @@ function displayArmyMiniatures(miniatures) {
         totalCost += mini.point_cost * mini.quantity;
         const card = document.createElement('div');
         card.className = 'miniature-card-small';
+        card.dataset.miniId = mini.id;
         card.innerHTML = `
             <img src="${mini.image_url}" alt="${mini.name}">
-            <h4>${mini.name}</h4>
+            <h4 class="mini-name-clickable">${mini.name}</h4>
             <p>Quantity: ${mini.quantity}</p>
             ${mini.collection_quantity > 0 ? `<p>In Collection: ${mini.collection_quantity}</p>` : ''}
             ${mini.shopping_list_quantity > 0 ? `<p>In Shopping List: ${mini.shopping_list_quantity}</p>` : ''}
@@ -61,26 +62,38 @@ function displayArmyMiniatures(miniatures) {
 
     document.getElementById('armyCost').textContent = `Total Cost: ${totalCost}`;
 
-    document.querySelectorAll('#armyMiniaturesContainer .btn-delete').forEach(button => {
-        button.addEventListener('click', event => {
-            const miniId = event.target.dataset.miniId;
-            const quantity = parseInt(event.target.dataset.quantity);
-            removeMiniatureFromArmy(miniId, quantity);
-        });
-    });
+    // Event delegation for tooltips and remove buttons
+    container.addEventListener('click', event => {
+        const target = event.target;
 
-    document.querySelectorAll('#armyMiniaturesContainer .miniature-card-small').forEach(card => {
-        card.addEventListener('mouseenter', event => {
-            const miniId = event.currentTarget.dataset.miniId;
+        // Handle remove button clicks
+        if (target.classList.contains('btn-delete')) {
+            const miniId = target.dataset.miniId;
+            const quantity = parseInt(target.dataset.quantity);
+            removeMiniatureFromArmy(miniId, quantity);
+            return; // Stop further processing
+        }
+
+        // Handle miniature name clicks for tooltip
+        if (target.classList.contains('mini-name-clickable')) {
+            const miniId = target.closest('.miniature-card-small').dataset.miniId;
             const mini = armyMiniaturesData[miniId];
             if (mini) {
                 showMiniatureTooltip(mini, event);
+                event.stopPropagation(); // Prevent the document click listener from hiding the tooltip immediately
             }
-        });
+        }
+    });
 
-        card.addEventListener('mouseleave', () => {
+    // Hide tooltip when clicking anywhere else on the document
+    document.addEventListener('click', (event) => {
+        const tooltip = document.getElementById('miniatureTooltip');
+        const isClickInsideTooltip = tooltip.contains(event.target);
+
+        // If the click is outside the tooltip and not on a clickable name, hide it.
+        if (tooltip.style.display === 'block' && !isClickInsideTooltip) {
             hideMiniatureTooltip();
-        });
+        }
     });
 }
 
