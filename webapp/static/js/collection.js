@@ -317,3 +317,56 @@ function updateQuantity(miniatureId, quantity) {
         console.error('Error:', error);
     });
 }
+
+// Detailed modal for mini metrics
+function openMiniModal(mini, metrics) {
+    let modal = document.getElementById('mini-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'mini-modal';
+        modal.className = 'mini-modal';
+        document.body.appendChild(modal);
+    }
+    modal.innerHTML = '';
+    modal.style.display = 'block';
+    modal.style.position = 'fixed';
+    modal.style.left = '50%';
+    modal.style.top = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.background = '#fff';
+    modal.style.padding = '20px';
+    modal.style.border = '1px solid #333';
+    modal.style.maxHeight = '80vh';
+    modal.style.overflow = 'auto';
+
+    const title = document.createElement('h2');
+    title.textContent = mini.name;
+    modal.appendChild(title);
+
+    const statsTable = document.createElement('table');
+    statsTable.style.width = '100%';
+    const header = document.createElement('tr');
+    header.innerHTML = `<th>Stat</th><th>Value</th><th>Global Median</th><th>Point Bin Median</th><th>Quantile Median</th><th>Global %ile</th><th>Point %ile</th><th>Quantile %ile</th>`;
+    statsTable.appendChild(header);
+
+    ['attack','defense','speed','damage','range'].forEach(s => {
+        const sData = metrics && metrics.stats ? metrics.stats[s] : null;
+        const row = document.createElement('tr');
+        if (!sData) {
+            row.innerHTML = `<td>${s}</td><td colspan="7">No data</td>`;
+        } else {
+            const safe = v => (v === null || v === undefined) ? '-' : (typeof v === 'number' ? (Math.round((v + Number.EPSILON) * 100) / 100) : v);
+            const gp = sData.global_percentile !== undefined && sData.global_percentile !== null ? `${Math.round(sData.global_percentile * 10)/10}%` : '-';
+            const pp = sData.point_bin_percentile !== undefined && sData.point_bin_percentile !== null ? `${Math.round(sData.point_bin_percentile * 10)/10}%` : '-';
+            const qp = sData.quantile_bin_percentile !== undefined && sData.quantile_bin_percentile !== null ? `${Math.round(sData.quantile_bin_percentile * 10)/10}%` : '-';
+            row.innerHTML = `<td>${s}</td><td>${safe(sData.value)}</td><td>${safe(sData.global_median)}</td><td>${safe(sData.point_bin_median)}</td><td>${safe(sData.quantile_bin_median)}</td><td>${gp}</td><td>${pp}</td><td>${qp}</td>`;
+        }
+        statsTable.appendChild(row);
+    });
+    modal.appendChild(statsTable);
+
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Close';
+    closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+    modal.appendChild(closeBtn);
+}
