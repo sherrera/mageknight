@@ -181,6 +181,18 @@ function displayMiniatures(miniatures, collectionMap, metrics) {
 
     let totalMinis = 0;
 
+    // Build lookup maps for metrics by id, collector_number, and name to handle mismatches
+    let metricsById = {};
+    let metricsByCollector = {};
+    let metricsByName = {};
+    if (metrics && metrics.minis) {
+        Object.values(metrics.minis).forEach(m => {
+            if (m.id !== undefined && m.id !== null) metricsById[String(m.id)] = m;
+            if (m.collector_number !== undefined && m.collector_number !== null) metricsByCollector[String(m.collector_number)] = m;
+            if (m.name) metricsByName[String(m.name).toLowerCase()] = m;
+        });
+    }
+
     miniatures.forEach(mini => {
         const quantity = collectionMap[mini.id] || 1;
         totalMinis += quantity;
