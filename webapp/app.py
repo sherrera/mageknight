@@ -5,6 +5,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import os
 import json
+import importlib
+import sys
+import traceback
 
 app = Flask(__name__)
 
@@ -289,6 +292,37 @@ def get_minis_metrics():
         return jsonify(data)
     except Exception as e:
         return jsonify({'error': f'Failed to read metrics: {e}'}), 500
+
+
+@app.route('/api/minis/metrics/regenerate', methods=['POST'])
+def regenerate_minis_metrics():
+    """Regenerate minis metrics by invoking scripts/compute_metrics.compute().
+    Security: If METRICS_SECRET env var is set, require X-METRICS-SECRET header matching it.
+    Otherwise, only allow requests from localhost (127.0.0.1 / ::1).
+    """
+    # simple auth
+    secret = os.environ.get('METRICS_SECRET')
+    if secret:
+        header = request.headers.get('X-METRICS-SECRET')
+        if header != secret:
+            return jsonify({'error': 'Unauthorized'}), 401
+    else:
+        # allow only localhost when no secret
+        if request.remote_addr not in ('127.0.0.1', '::1'):
+            return jsonify({'error': 'Forbidden: set METRICS_SECRET to enable remote regen'}), 403
+
+    try:
+        # Ensure scripts package is importable
+        scripts_dir = os.path.join(os.path.dirname(__file__), '..')
+        if scripts_dir not in sys.path:
+            sys.path.append(scripts_dir)
+        cm = importlib.import_module('scripts.compute_metrics')
+        # Call compute() synchronously
+        cm.compute()
+        return jsonify({'message': 'Metrics regenerated'}), 200
+    except Exception as e:
+        tb = traceback.format_exc()
+        return jsonify({'error': str(e), 'traceback': tb}), 500
 
 @app.route('/api/distinct_values')
 def get_distinct_values():
