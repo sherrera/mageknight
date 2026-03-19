@@ -159,6 +159,7 @@
   overflow-x: auto;
   border-top: 1px solid var(--sl-color-neutral-100);
   margin-top: 4px;
+  flex: 1;
 }
 
 .dial-table {
@@ -204,6 +205,18 @@
 .stat-value {
   font-weight: var(--sl-font-weight-semibold);
 }
+
+/* Stat tier colouring — gated on html.stat-tiers (toggled via toolbar button).
+   rgba backgrounds work in light + dark mode without separate overrides. */
+html.stat-tiers .stat--g1 { background: rgba(34, 197, 94, 0.15); border-radius: 4px; }
+html.stat-tiers .stat--g2 { background: rgba(34, 197, 94, 0.32); border-radius: 4px; }
+html.stat-tiers .stat--g3 { background: rgba(34, 197, 94, 0.55); border-radius: 4px; }
+html.stat-tiers .stat--r1 { background: rgba(239, 68, 68, 0.12); border-radius: 4px; }
+html.stat-tiers .stat--r2 { background: rgba(239, 68, 68, 0.28); border-radius: 4px; }
+html.stat-tiers .stat--r3 { background: rgba(239, 68, 68, 0.50); border-radius: 4px; }
+
+html.stat-tiers .stat--g2 .stat-value,
+html.stat-tiers .stat--g3 .stat-value { font-weight: var(--sl-font-weight-bold); }
 
 /* Ability chip — background colour comes from the DB */
 .ability-chip {
@@ -320,3 +333,4 @@
   background: var(--sl-color-success-800);
   color: var(--sl-color-success-300);
 }
+
