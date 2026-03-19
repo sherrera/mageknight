@@ -66,6 +66,59 @@ function isDead(c: Click): boolean {
   return c.speed === 0 && c.attack === 0 && c.defense === 0 && c.damage === 0;
 }
 
+// ---------------------------------------------------------------------------
+// Stat value maps — mirrors src/server/lib/scores.ts STAT_MAPS.
+// Used client-side for driver chip and stat tier colouring.
+// ---------------------------------------------------------------------------
+
+const STAT_MAPS_CLIENT: Record<string, Record<number, number>> = {
+  speed:   { 0:0, 1:6, 2:11, 3:17, 4:22, 5:28, 6:33, 7:39, 8:44, 9:50, 10:56, 11:61, 12:67, 13:72, 14:78, 15:83, 16:89, 17:94, 18:100 },
+  attack:  { 0:3, 1:3, 2:3, 3:8, 4:17, 5:28, 6:42, 7:58, 8:72, 9:83, 10:92, 11:97, 12:97, 13:97, 14:97, 15:97 },
+  defense: { 0:3, 1:3, 2:3, 3:3, 4:3, 5:3, 6:3, 7:3, 8:3, 9:3, 10:3, 11:8, 12:17, 13:28, 14:42, 15:58, 16:72, 17:83, 18:92, 19:97, 20:97 },
+  damage:  { 0:0, 1:15, 2:35, 3:70, 4:90, 5:100, 6:105, 7:108, 8:110 },
+};
+
+
+/** Returns a CSS class for stat-value spans — 3 green tiers (g1/g2/g3) and 3 red tiers (r1/r2/r3). */
+function statTierClass(stat: 'speed' | 'attack' | 'defense' | 'damage', val: number | null): string {
+  if (val == null) return '';
+  switch (stat) {
+    case 'attack':
+      if (val >= 11) return 'stat--g3';
+      if (val >= 9)  return 'stat--g2';
+      if (val >= 8)  return 'stat--g1';
+      if (val <= 3)  return 'stat--r3';
+      if (val <= 4)  return 'stat--r2';
+      if (val <= 5)  return 'stat--r1';
+      return '';
+    case 'defense':
+      if (val >= 19) return 'stat--g3';
+      if (val >= 17) return 'stat--g2';
+      if (val >= 16) return 'stat--g1';
+      if (val <= 10) return 'stat--r3';
+      if (val <= 11) return 'stat--r2';
+      if (val <= 13) return 'stat--r1';
+      return '';
+    case 'damage':
+      if (val >= 5)  return 'stat--g3';
+      if (val >= 4)  return 'stat--g2';
+      if (val >= 3)  return 'stat--g1';
+      if (val <= 0)  return 'stat--r3';
+      if (val <= 1)  return 'stat--r2';
+      return '';
+    case 'speed':
+      if (val >= 12) return 'stat--g3';
+      if (val >= 10) return 'stat--g2';
+      if (val >= 8)  return 'stat--g1';
+      if (val <= 2)  return 'stat--r3';
+      if (val <= 4)  return 'stat--r2';
+      if (val <= 6)  return 'stat--r1';
+      return '';
+    default: return '';
+  }
+}
+
+
 function abilityChip(ability: Ability | null): string {
   if (!ability) return '';
   const bg = ability.color ?? '#6b7280';
@@ -107,10 +160,10 @@ function renderDial(clicks: Click[]): string {
     return `
     <tr>
       <td class="dial-click-num">${c.click_number ?? ''}</td>
-      <td><div class="stat-cell"><span class="stat-value">${c.speed ?? '—'}</span>${abilityChip(c.speed_ability)}</div></td>
-      <td><div class="stat-cell"><span class="stat-value">${c.attack ?? '—'}</span>${abilityChip(c.attack_ability)}</div></td>
-      <td><div class="stat-cell"><span class="stat-value">${c.defense ?? '—'}</span>${abilityChip(c.defense_ability)}</div></td>
-      <td><div class="stat-cell"><span class="stat-value">${c.damage ?? '—'}</span>${abilityChip(c.damage_ability)}</div></td>
+      <td><div class="stat-cell ${statTierClass('speed',   c.speed)}"><span class="stat-value">${c.speed ?? '—'}</span>${abilityChip(c.speed_ability)}</div></td>
+      <td><div class="stat-cell ${statTierClass('attack',  c.attack)}"><span class="stat-value">${c.attack ?? '—'}</span>${abilityChip(c.attack_ability)}</div></td>
+      <td><div class="stat-cell ${statTierClass('defense', c.defense)}"><span class="stat-value">${c.defense ?? '—'}</span>${abilityChip(c.defense_ability)}</div></td>
+      <td><div class="stat-cell ${statTierClass('damage',  c.damage)}"><span class="stat-value">${c.damage ?? '—'}</span>${abilityChip(c.damage_ability)}</div></td>
     </tr>`;
   }).join('');
 

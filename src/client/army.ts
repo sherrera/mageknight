@@ -411,6 +411,13 @@ function applyTheme(dark: boolean): void {
   localStorage.setItem('theme', dark ? 'dark' : 'light');
 }
 
+function applyStatTiers(on: boolean): void {
+  document.documentElement.classList.toggle('stat-tiers', on);
+  const btn = document.getElementById('btn-stat-tiers') as HTMLElement & { name: string };
+  btn.name = on ? 'palette' : 'palette2';
+  localStorage.setItem('statTiers', on ? '1' : '0');
+}
+
 // ---------------------------------------------------------------------------
 // Boot
 // ---------------------------------------------------------------------------
@@ -422,8 +429,13 @@ async function init(): Promise<void> {
   armyId = idParam;
 
   applyTheme(localStorage.getItem('theme') === 'dark');
+  applyStatTiers(localStorage.getItem('statTiers') === '1');
+
   document.getElementById('btn-dark-mode')!.addEventListener('click', () => {
     applyTheme(!document.documentElement.classList.contains('sl-theme-dark'));
+  });
+  document.getElementById('btn-stat-tiers')!.addEventListener('click', () => {
+    applyStatTiers(!document.documentElement.classList.contains('stat-tiers'));
   });
 
   document.getElementById('army-roster')!.addEventListener('click', handleRosterClick);
