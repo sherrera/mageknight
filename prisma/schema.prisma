@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model abilities {
+  id              Int     @id @default(autoincrement())
+  name            String  @unique @db.VarChar(255)
+  color           String? @db.VarChar(7)
+  weight_category String? @default("neutral") @db.VarChar(20)
+  click_stats_click_stats_attack_ability_idToabilities  click_stats[] @relation("click_stats_attack_ability_idToabilities")
+  click_stats_click_stats_damage_ability_idToabilities  click_stats[] @relation("click_stats_damage_ability_idToabilities")
+  click_stats_click_stats_defense_ability_idToabilities click_stats[] @relation("click_stats_defense_ability_idToabilities")
+  click_stats_click_stats_speed_ability_idToabilities   click_stats[] @relation("click_stats_speed_ability_idToabilities")
+}
+
+model armies {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar(255)
+  description     String?
+  created_at      DateTime?         @default(now()) @db.Timestamptz(6)
+  army_miniatures army_miniatures[]
+}
+
+model army_miniatures {
+  id           Int        @id @default(autoincrement())
+  army_id      Int
+  miniature_id Int
+  quantity     Int
+  armies       armies     @relation(fields: [army_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  miniatures   miniatures @relation(fields: [miniature_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model click_stats {
+  id                                                  Int         @id @default(autoincrement())
+  miniature_id                                        Int?
+  click_number                                        Int?
+  speed                                               Int?
+  attack                                              Int?
+  defense                                             Int?
+  damage                                              Int?
+  speed_ability_id                                    Int?
+  attack_ability_id                                   Int?
+  defense_ability_id                                  Int?
+  damage_ability_id                                   Int?
+  abilities_click_stats_attack_ability_idToabilities  abilities?  @relation("click_stats_attack_ability_idToabilities", fields: [attack_ability_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  abilities_click_stats_damage_ability_idToabilities  abilities?  @relation("click_stats_damage_ability_idToabilities", fields: [damage_ability_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  abilities_click_stats_defense_ability_idToabilities abilities?  @relation("click_stats_defense_ability_idToabilities", fields: [defense_ability_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  miniatures                                          miniatures? @relation(fields: [miniature_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  abilities_click_stats_speed_ability_idToabilities   abilities?  @relation("click_stats_speed_ability_idToabilities", fields: [speed_ability_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model collection_items {
+  id           Int        @id @default(autoincrement())
+  miniature_id Int
+  quantity     Int
+  miniatures   miniatures @relation(fields: [miniature_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model factions {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique @db.VarChar(255)
+  miniature_factions miniature_factions[]
+}
+
+model miniature_factions {
+  miniature_id Int
+  faction_id   Int
+  factions     factions   @relation(fields: [faction_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  miniatures   miniatures @relation(fields: [miniature_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([miniature_id, faction_id])
+}
+
+model miniatures {
+  id                          Int                   @id @default(autoincrement())
+  name                        String?               @db.VarChar(255)
+  set_name                    String?               @db.VarChar(255)
+  rank                        String?               @db.VarChar(50)
+  point_cost                  Int?
+  collector_number            Int?
+  frq                         Int?
+  arc                         Int?
+  range                       Int?
+  range_targets               Int?
+  image_url                   String?               @db.VarChar(255)
+  source_url                  String?               @db.VarChar(255)
+  peak_score                  Float?
+  sustained_score             Float?
+  overall_score               Float?
+  army_miniatures             army_miniatures[]
+  click_stats                 click_stats[]
+  collection_items            collection_items[]
+  collection_transactions     collection_transactions[]
+  miniature_factions          miniature_factions[]
+  shopping_list_items         shopping_list_items[]
+}
+
+model collection_transactions {
+  id           Int        @id @default(autoincrement())
+  created_at   DateTime   @default(now()) @db.Timestamptz(6)
+  action       String     @db.VarChar(20)
+  miniature_id Int
+  new_qty      Int
+  prev_qty     Int
+  miniatures   miniatures @relation(fields: [miniature_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([created_at(sort: Desc)])
+}
+
+model shopping_list_items {
+  id           Int        @id @default(autoincrement())
+  miniature_id Int
+  store_link   String?    @db.VarChar(1024)
+  price        Float?
+  quantity     Int
+  added_at     String?    @db.VarChar
+  miniatures   miniatures @relation(fields: [miniature_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}

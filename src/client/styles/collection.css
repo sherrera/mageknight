@@ -1,0 +1,112 @@
+/* -------------------------------------------------------------------------
+   Collection page layout — filter sidebar + card grid.
+   Filter, grid, and state-message styles live in main.css (shared).
+   Card styles live in mini-card.css (shared across pages).
+   ------------------------------------------------------------------------- */
+
+.collection-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--sl-spacing-large);
+  padding: var(--sl-spacing-large);
+  align-items: start;
+  max-width: 1900px;
+  margin: 0 auto;
+}
+
+/* ---- Results header ---- */
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sl-spacing-medium);
+  gap: var(--sl-spacing-medium);
+}
+
+.results-sort {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-small);
+}
+
+.collection-title {
+  margin: 0 0 4px 0;
+  font-size: var(--sl-font-size-x-large);
+  font-weight: var(--sl-font-weight-bold);
+}
+
+/* ---- History modal ---- */
+
+.history-footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.history-entry {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: var(--sl-spacing-small);
+  padding: var(--sl-spacing-x-small) 0;
+  border-bottom: 1px solid var(--sl-color-neutral-100);
+}
+
+.history-entry:last-child {
+  border-bottom: none;
+}
+
+.history-entry__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-entry__name {
+  font-size: var(--sl-font-size-small);
+  font-weight: var(--sl-font-weight-semibold);
+}
+
+.history-entry__action {
+  font-size: var(--sl-font-size-x-small);
+  color: var(--sl-color-neutral-500);
+}
+
+.history-entry__action--add    { color: var(--sl-color-success-600); }
+.history-entry__action--remove { color: var(--sl-color-danger-600);  }
+
+.history-entry__time {
+  font-size: var(--sl-font-size-x-small);
+  color: var(--sl-color-neutral-400);
+  white-space: nowrap;
+}
+
+.history-empty {
+  text-align: center;
+  padding: var(--sl-spacing-3x-large) 0;
+  color: var(--sl-color-neutral-400);
+  font-size: var(--sl-font-size-small);
+}
+
+/* ---- Quantity controls ---- */
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-x-small);
+  flex: 1;
+}
+
+.quantity-value {
+  min-width: 28px;
+  text-align: center;
+  font-weight: var(--sl-font-weight-bold);
+  font-size: var(--sl-font-size-medium);
+}

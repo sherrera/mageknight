@@ -1,0 +1,151 @@
+/* -------------------------------------------------------------------------
+   Global styles — shared across all pages.
+   We lean on Shoelace's CSS custom properties for spacing, color, and
+   typography so everything stays consistent with the component library.
+   Dark mode is handled by Shoelace: adding the `sl-theme-dark` class to
+   <html> swaps the entire token set automatically.
+   ------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--sl-font-sans);
+  background: var(--sl-color-neutral-50);
+  color: var(--sl-color-neutral-900);
+  min-height: 100vh;
+}
+
+/* App header — sits above every page */
+.app-header {
+  background: var(--sl-color-neutral-0);
+  border-bottom: 1px solid var(--sl-color-neutral-200);
+  padding: var(--sl-spacing-small) var(--sl-spacing-x-large);
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-large);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-header__title {
+  font-size: var(--sl-font-size-large);
+  font-weight: var(--sl-font-weight-bold);
+  color: var(--sl-color-primary-700);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.app-header__nav {
+  display: flex;
+  gap: var(--sl-spacing-medium);
+  flex: 1;
+}
+
+.app-header__nav a {
+  color: var(--sl-color-neutral-600);
+  text-decoration: none;
+  font-size: var(--sl-font-size-small);
+  font-weight: var(--sl-font-weight-semibold);
+  padding: var(--sl-spacing-x-small) var(--sl-spacing-small);
+  border-radius: var(--sl-border-radius-medium);
+  transition: background 0.15s, color 0.15s;
+}
+
+.app-header__nav a:hover,
+.app-header__nav a.active {
+  background: var(--sl-color-primary-100);
+  color: var(--sl-color-primary-700);
+}
+
+.app-header__actions {
+  margin-left: auto;
+}
+
+/* -------------------------------------------------------------------------
+   Filter sidebar — used by Browse and Collection pages via the shared
+   filter-panel component. Lives here so both pages get the styles without
+   duplicating them or importing each other's CSS.
+   ------------------------------------------------------------------------- */
+
+.filters {
+  position: sticky;
+  top: 60px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sl-spacing-medium);
+  padding-right: var(--sl-spacing-x-small);
+}
+
+/* Prevent Shoelace inputs from overflowing the 280px sidebar column.
+   Shoelace inputs have an internal min-width that ignores parent constraints. */
+.filters sl-input,
+.filters sl-select {
+  min-width: 0;
+}
+
+.filters__section-label {
+  font-size: var(--sl-font-size-x-small);
+  font-weight: var(--sl-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sl-color-neutral-500);
+  margin: 0 0 var(--sl-spacing-x-small) 0;
+}
+
+.filters__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sl-spacing-x-small);
+}
+
+.filters__stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sl-spacing-x-small);
+}
+
+/* -------------------------------------------------------------------------
+   Card grid + empty/loading states — shared across Browse and Collection.
+   ------------------------------------------------------------------------- */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--sl-spacing-medium);
+  align-items: start;
+}
+
+.state-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--sl-spacing-4x-large);
+  color: var(--sl-color-neutral-400);
+  font-size: var(--sl-font-size-large);
+}
+
+.results-count {
+  font-size: var(--sl-font-size-small);
+  color: var(--sl-color-neutral-500);
+  white-space: nowrap;
+}
+
+/* Utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
