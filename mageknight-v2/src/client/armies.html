@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mage Knight — Armies</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/dark.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
+
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/armies.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <h1 class="app-header__title">Mage Knight</h1>
+      <nav class="app-header__nav">
+        <a href="/">Browse</a>
+        <a href="/collection.html">Collection</a>
+        <a href="/armies.html" class="active">Army Builder</a>
+        <a href="/abilities.html">Abilities</a>
+      </nav>
+      <div class="app-header__actions">
+        <sl-icon-button id="btn-dark-mode" name="moon" label="Toggle dark mode"></sl-icon-button>
+      </div>
+    </header>
+
+    <main class="armies-layout">
+      <div class="armies-header">
+        <h2 class="armies-title">My Armies</h2>
+        <sl-button id="btn-new-army" variant="primary" size="small">
+          <sl-icon slot="prefix" name="plus-lg"></sl-icon>
+          New Army
+        </sl-button>
+      </div>
+
+      <div id="army-cards" class="army-cards">
+        <p class="state-message">Loading armies…</p>
+      </div>
+    </main>
+
+    <!-- New army dialog -->
+    <sl-dialog id="new-army-dialog" label="New Army" style="--width: 420px">
+      <div style="display:flex;flex-direction:column;gap:var(--sl-spacing-medium)">
+        <sl-input id="new-army-name" label="Name" placeholder="e.g. Tournament Build" autofocus></sl-input>
+        <sl-textarea id="new-army-description" label="Description (optional)" placeholder="Notes about this army…" rows="3"></sl-textarea>
+      </div>
+      <div slot="footer" style="display:flex;justify-content:flex-end;gap:var(--sl-spacing-small)">
+        <sl-button id="btn-cancel-new-army" variant="default">Cancel</sl-button>
+        <sl-button id="btn-confirm-new-army" variant="primary">Create</sl-button>
+      </div>
+    </sl-dialog>
+
+    <script type="module" src="./armies.ts"></script>
+  </body>
+</html>

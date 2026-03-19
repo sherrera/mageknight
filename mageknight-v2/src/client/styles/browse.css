@@ -1,0 +1,43 @@
+/* -------------------------------------------------------------------------
+   Browse page layout — filter sidebar + card grid.
+   Filter, grid, and state-message styles live in main.css (shared).
+   Card styles live in mini-card.css (shared across pages).
+   ------------------------------------------------------------------------- */
+
+.browse-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--sl-spacing-large);
+  padding: var(--sl-spacing-large);
+  align-items: start;
+  max-width: 1900px;
+  margin: 0 auto;
+}
+
+/* ---- Results header ---- */
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sl-spacing-medium);
+  gap: var(--sl-spacing-medium);
+}
+
+.results-sort {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-small);
+}
+
+/* ---- Owned indicator (injected via card actions slot) ---- */
+
+.owned-badge {
+  font-size: var(--sl-font-size-x-small);
+  font-weight: var(--sl-font-weight-semibold);
+  color: var(--sl-color-success-700);
+  background: var(--sl-color-success-100);
+  border: 1px solid var(--sl-color-success-300);
+  padding: 2px 8px;
+  border-radius: 99px;
+}

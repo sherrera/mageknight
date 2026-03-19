@@ -1,0 +1,328 @@
+/* -------------------------------------------------------------------------
+   Armies pages — shared by armies list (armies.html) and army builder (army.html).
+   Filter, grid, and state-message base styles live in main.css.
+   ------------------------------------------------------------------------- */
+
+/* ---- Armies list layout ---- */
+
+.armies-layout {
+  padding: var(--sl-spacing-large);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.armies-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sl-spacing-large);
+  gap: var(--sl-spacing-medium);
+}
+
+.armies-title {
+  margin: 0;
+  font-size: var(--sl-font-size-x-large);
+  font-weight: var(--sl-font-weight-bold);
+}
+
+/* ---- Army cards grid ---- */
+
+.army-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sl-spacing-medium);
+  align-items: start;
+}
+
+.army-card {
+  background: var(--sl-color-neutral-0);
+  border: 1px solid var(--sl-color-neutral-200);
+  border-radius: var(--sl-border-radius-large);
+  padding: var(--sl-spacing-medium);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sl-spacing-small);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.army-card:hover {
+  border-color: var(--sl-color-primary-400);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.army-card__name {
+  font-size: var(--sl-font-size-medium);
+  font-weight: var(--sl-font-weight-bold);
+  margin: 0;
+}
+
+.army-card__description {
+  font-size: var(--sl-font-size-small);
+  color: var(--sl-color-neutral-500);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.army-card__stats {
+  display: flex;
+  gap: var(--sl-spacing-medium);
+  font-size: var(--sl-font-size-x-small);
+  color: var(--sl-color-neutral-500);
+  border-top: 1px solid var(--sl-color-neutral-100);
+  padding-top: var(--sl-spacing-small);
+  margin-top: auto;
+}
+
+.army-card__stat strong {
+  color: var(--sl-color-neutral-900);
+}
+
+.army-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sl-spacing-x-small);
+  /* Stop clicks on action buttons from navigating to army detail */
+}
+
+/* ---- Army builder layout — sidebar + main, same grid as browse/collection ---- */
+
+.army-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--sl-spacing-large);
+  padding: var(--sl-spacing-large);
+  align-items: start;
+  max-width: 1900px;
+  margin: 0 auto;
+}
+
+.army-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sl-spacing-large);
+}
+
+/* ---- Army header (name + description + points) ---- */
+
+.army-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sl-spacing-large);
+  flex-wrap: wrap;
+}
+
+.army-header__meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sl-spacing-x-small);
+}
+
+.army-header__points {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.points-total {
+  font-size: var(--sl-font-size-2x-large);
+  font-weight: var(--sl-font-weight-bold);
+  color: var(--sl-color-primary-700);
+  line-height: 1;
+}
+
+.points-label {
+  font-size: var(--sl-font-size-x-small);
+  color: var(--sl-color-neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Army roster (compact list of minis in army) ---- */
+
+.army-roster-section {
+  background: var(--sl-color-neutral-0);
+  border: 1px solid var(--sl-color-neutral-200);
+  border-radius: var(--sl-border-radius-large);
+  padding: var(--sl-spacing-medium);
+}
+
+.army-section-label {
+  font-size: var(--sl-font-size-x-small);
+  font-weight: var(--sl-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sl-color-neutral-500);
+  margin: 0 0 var(--sl-spacing-small) 0;
+}
+
+.collection-section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-medium);
+  margin-bottom: calc(-1 * var(--sl-spacing-small));
+}
+
+.results-sort {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-small);
+  margin-left: auto;
+}
+
+.roster-empty {
+  font-size: var(--sl-font-size-small);
+  color: var(--sl-color-neutral-400);
+  margin: 0;
+  padding: var(--sl-spacing-small) 0;
+}
+
+/* Each row in the compact army roster */
+.roster-row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto;
+  align-items: center;
+  gap: var(--sl-spacing-small);
+  padding: var(--sl-spacing-x-small) 0;
+  border-bottom: 1px solid var(--sl-color-neutral-100);
+}
+
+.roster-row:last-child {
+  border-bottom: none;
+}
+
+.roster-row__image {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: var(--sl-border-radius-small);
+  background: var(--sl-color-neutral-100);
+}
+
+.roster-row__info {
+  min-width: 0;
+}
+
+.roster-row__name-line {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-x-small);
+  flex-wrap: wrap;
+}
+
+/* Rank badge — reuses the same rank-- color tokens defined in mini-card.css */
+.roster-rank-badge {
+  font-size: 10px;
+  font-weight: var(--sl-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 99px;
+  white-space: nowrap;
+  background: var(--rank-color, var(--sl-color-neutral-200));
+  color: var(--rank-text, var(--sl-color-neutral-900));
+}
+
+.roster-row__factions {
+  font-size: var(--sl-font-size-x-small);
+  color: var(--sl-color-neutral-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.roster-row__name {
+  font-size: var(--sl-font-size-small);
+  font-weight: var(--sl-font-weight-semibold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+  /* Subtle underline hint that this element has a hover interaction */
+  text-decoration: underline dotted var(--sl-color-neutral-400);
+  text-underline-offset: 3px;
+}
+
+/* ---- Roster hover preview card ---- */
+
+#roster-preview {
+  position: fixed;
+  z-index: 9999;
+  width: 280px;
+  display: none;
+  /* pointer-events: none so hovering the preview doesn't steal the mouseleave */
+  pointer-events: none;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.22));
+  /* Small delay avoids the preview flickering when the mouse briefly crosses the name */
+  transition: opacity 0.1s;
+}
+
+.roster-row__pts {
+  font-size: var(--sl-font-size-x-small);
+  color: var(--sl-color-neutral-500);
+}
+
+.roster-row__controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.roster-row__qty {
+  min-width: 24px;
+  text-align: center;
+  font-size: var(--sl-font-size-small);
+  font-weight: var(--sl-font-weight-bold);
+}
+
+/* ---- Card action slot for collection minis in army builder ---- */
+
+.army-add-badge {
+  font-size: var(--sl-font-size-x-small);
+  font-weight: var(--sl-font-weight-semibold);
+  color: var(--sl-color-primary-700);
+  background: var(--sl-color-primary-100);
+  border: 1px solid var(--sl-color-primary-300);
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+.army-stock {
+  font-size: var(--sl-font-size-x-small);
+  color: var(--sl-color-neutral-500);
+  white-space: nowrap;
+}
+.army-stock strong {
+  color: var(--sl-color-neutral-700);
+}
+.army-stock--empty {
+  color: var(--sl-color-warning-700);
+  font-weight: var(--sl-font-weight-semibold);
+}
+.army-stock--empty strong {
+  color: var(--sl-color-danger-600);
+}
+.sl-theme-dark .army-stock strong         { color: var(--sl-color-neutral-300); }
+.sl-theme-dark .army-stock--empty         { color: var(--sl-color-warning-400); }
+.sl-theme-dark .army-stock--empty strong  { color: var(--sl-color-danger-400); }
+
+/* ---- Army quantity controls (same look as collection page) ---- */
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-x-small);
+  flex: 1;
+}
+
+.quantity-value {
+  min-width: 28px;
+  text-align: center;
+  font-weight: var(--sl-font-weight-bold);
+  font-size: var(--sl-font-size-medium);
+}

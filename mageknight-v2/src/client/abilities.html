@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mage Knight — Abilities</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/dark.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
+
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/abilities.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <h1 class="app-header__title">Mage Knight</h1>
+      <nav class="app-header__nav">
+        <a href="/">Browse</a>
+        <a href="/collection.html">Collection</a>
+        <a href="/armies.html">Army Builder</a>
+        <a href="/abilities.html" class="active">Abilities</a>
+      </nav>
+      <div class="app-header__actions">
+        <sl-icon-button id="btn-dark-mode" name="moon" label="Toggle dark mode"></sl-icon-button>
+      </div>
+    </header>
+
+    <main class="abilities-layout">
+      <div class="abilities-header">
+        <div>
+          <h2 class="abilities-title">Ability Categories</h2>
+          <p class="abilities-subtitle">
+            Adjust how each ability influences the Peak, Sustained, and Overall scores.
+            Changes take effect when you regenerate metrics.
+          </p>
+        </div>
+        <sl-button id="btn-regenerate" variant="primary">
+          <sl-icon slot="prefix" name="arrow-clockwise"></sl-icon>
+          Save &amp; Regenerate
+        </sl-button>
+      </div>
+
+      <!-- Status banner shown after regeneration -->
+      <div id="regen-status" class="regen-status" style="display:none"></div>
+
+      <!-- Category legend -->
+      <div class="category-legend">
+        <span class="cat-pill cat--high">High</span> large unconditional game impact
+        <span class="cat-sep">·</span>
+        <span class="cat-pill cat--medium">Medium</span> meaningful but conditional
+        <span class="cat-sep">·</span>
+        <span class="cat-pill cat--low">Low</span> minor / situational
+        <span class="cat-sep">·</span>
+        <span class="cat-pill cat--neutral">Neutral</span> no effect on scores
+        <span class="cat-sep">·</span>
+        <span class="cat-pill cat--negative">Negative</span> clear downside
+      </div>
+
+      <!-- Ability table — populated by abilities.ts -->
+      <div id="abilities-table-wrap">
+        <p class="state-message">Loading abilities…</p>
+      </div>
+    </main>
+
+    <script type="module" src="./abilities.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mage Knight — Browse</title>
+
+    <!--
+      Shoelace is loaded from CDN rather than bundled. This keeps the Vite
+      build fast and avoids needing to configure asset copying for Shoelace's
+      icon/asset files. The autoloader only registers components that appear
+      in the DOM, so unused components cost nothing.
+    -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/dark.css"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"
+    ></script>
+
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/mini-card.css" />
+    <link rel="stylesheet" href="./styles/browse.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <h1 class="app-header__title">Mage Knight</h1>
+      <nav class="app-header__nav">
+        <a href="/" class="active">Browse</a>
+        <a href="/collection.html">Collection</a>
+        <a href="/armies.html">Army Builder</a>
+        <a href="/abilities.html">Abilities</a>
+      </nav>
+      <div class="app-header__actions">
+        <sl-icon-button
+          id="btn-dark-mode"
+          name="moon"
+          label="Toggle dark mode"
+        ></sl-icon-button>
+      </div>
+    </header>
+
+    <main class="browse-layout">
+      <!-- ----------------------------------------------------------------
+           Filter sidebar — populated at runtime by filter-panel.ts so
+           the same component can be reused across Browse and Collection.
+           ---------------------------------------------------------------- -->
+      <aside class="filters" id="filter-container"></aside>
+
+      <!-- ----------------------------------------------------------------
+           Right column — sort controls + card grid
+           ---------------------------------------------------------------- -->
+      <div>
+        <div class="results-header">
+          <span class="results-count" id="results-count">Loading…</span>
+          <div class="results-sort">
+            <sl-select id="filter-sort-by" size="small" value="name" style="width: 150px">
+              <sl-option value="name">Name</sl-option>
+              <sl-option value="point_cost">Cost</sl-option>
+              <sl-option value="set_name">Set</sl-option>
+              <sl-option value="rank">Rank</sl-option>
+              <sl-option value="overall_score">Overall Score</sl-option>
+              <sl-option value="peak_score">Peak Score</sl-option>
+              <sl-option value="sustained_score">Sustained Score</sl-option>
+            </sl-select>
+            <sl-button-group>
+              <sl-button id="btn-sort-asc"  size="small" variant="primary">↑</sl-button>
+              <sl-button id="btn-sort-desc" size="small" variant="default">↓</sl-button>
+            </sl-button-group>
+          </div>
+        </div>
+
+        <div class="cards-grid" id="cards-grid">
+          <p class="state-message">Loading miniatures…</p>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="./browse.ts"></script>
+  </body>
+</html>

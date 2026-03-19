@@ -1,0 +1,144 @@
+/* -------------------------------------------------------------------------
+   Abilities management page
+   ------------------------------------------------------------------------- */
+
+.abilities-layout {
+  padding: var(--sl-spacing-large);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.abilities-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sl-spacing-large);
+  margin-bottom: var(--sl-spacing-medium);
+  flex-wrap: wrap;
+}
+
+.abilities-title {
+  margin: 0 0 4px;
+  font-size: var(--sl-font-size-x-large);
+  font-weight: var(--sl-font-weight-bold);
+}
+
+.abilities-subtitle {
+  margin: 0;
+  font-size: var(--sl-font-size-small);
+  color: var(--sl-color-neutral-500);
+  max-width: 500px;
+}
+
+/* ---- Category legend ---- */
+
+.category-legend {
+  font-size: var(--sl-font-size-x-small);
+  color: var(--sl-color-neutral-500);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: var(--sl-spacing-small) var(--sl-spacing-medium);
+  background: var(--sl-color-neutral-50);
+  border: 1px solid var(--sl-color-neutral-200);
+  border-radius: var(--sl-border-radius-medium);
+  margin-bottom: var(--sl-spacing-medium);
+}
+
+.cat-sep {
+  color: var(--sl-color-neutral-300);
+}
+
+/* ---- Category pills — shared with abilities.html legend + table previews ---- */
+
+.cat-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1px 7px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.cat--high     { background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
+.cat--medium   { background: #dbeafe; color: #1e40af; border: 1px solid #60a5fa; }
+.cat--low      { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
+.cat--neutral  { background: var(--sl-color-neutral-100); color: var(--sl-color-neutral-600); border: 1px solid var(--sl-color-neutral-300); }
+.cat--negative { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
+
+/* ---- Status banner ---- */
+
+.regen-status {
+  padding: var(--sl-spacing-small) var(--sl-spacing-medium);
+  border-radius: var(--sl-border-radius-medium);
+  font-size: var(--sl-font-size-small);
+  margin-bottom: var(--sl-spacing-medium);
+}
+
+.regen-status--success {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+
+.regen-status--danger {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+/* ---- Abilities table ---- */
+
+.abilities-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--sl-font-size-small);
+}
+
+.abilities-table th {
+  text-align: left;
+  font-size: var(--sl-font-size-x-small);
+  font-weight: var(--sl-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sl-color-neutral-500);
+  padding: var(--sl-spacing-x-small) var(--sl-spacing-small);
+  border-bottom: 2px solid var(--sl-color-neutral-200);
+}
+
+.abilities-table td {
+  padding: 6px var(--sl-spacing-small);
+  border-bottom: 1px solid var(--sl-color-neutral-100);
+  vertical-align: middle;
+}
+
+.abilities-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Highlight rows that were changed but metrics not yet regenerated */
+.ability-row--changed {
+  background: color-mix(in srgb, var(--sl-color-primary-100) 40%, transparent);
+}
+
+.ability-col-name {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-x-small);
+}
+
+/* Coloured swatch matching the ability's chip colour */
+.ability-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.ability-swatch--none {
+  background: var(--sl-color-neutral-200);
+}
