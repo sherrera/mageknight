@@ -81,6 +81,18 @@ python3 scripts/process_images_step3_webp.py
 
 Background-removed PNGs are backed up at `../backups/images-nobg/` (step 2 takes ~7hrs on GPU).
 
+## Seeding the database
+
+A data dump of all 1,084 miniatures (no collection or army data) is included at `data/seed.sql`.
+
+```bash
+# First, push the schema
+npx prisma db push
+
+# Then load the data
+psql $DATABASE_URL < data/seed.sql
+```
+
 ## If the DB schema changes
 
 ```bash
