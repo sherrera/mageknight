@@ -2,3 +2,8 @@ node_modules/
 dist/
 .env
 prisma/generated/
+
+# Original and intermediate images — only images-webp/ is needed by the app
+public/images/
+public/images-resized/
+public/images-nobg/

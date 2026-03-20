@@ -96,7 +96,10 @@ async function fetchMinis(state: FilterState): Promise<Miniature[]> {
 // Rendering
 // ---------------------------------------------------------------------------
 
+let publicMode = false;
+
 function browseActions(mini: Miniature): string {
+  if (publicMode) return '';
   const qty = ownedMap.get(mini.id);
   if (qty) {
     return `
@@ -151,6 +154,12 @@ function applyStatTiers(on: boolean): void {
 async function init(): Promise<void> {
   applyTheme(localStorage.getItem('theme') === 'dark');
   applyStatTiers(localStorage.getItem('statTiers') === '1');
+
+  const config = await fetch('/api/config').then((r) => r.json()).catch(() => ({}));
+  publicMode = config.publicMode === true;
+  if (publicMode) {
+    document.querySelectorAll<HTMLElement>('[data-public-hide]').forEach((el) => el.remove());
+  }
 
   document.getElementById('btn-dark-mode')!.addEventListener('click', () => {
     applyTheme(!document.documentElement.classList.contains('sl-theme-dark'));

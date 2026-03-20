@@ -59,9 +59,10 @@ export function formatMiniature(m: MiniatureRow) {
     peak_score:      (m as { peak_score?: number | null }).peak_score      ?? null,
     sustained_score: (m as { sustained_score?: number | null }).sustained_score ?? null,
     overall_score:   (m as { overall_score?: number | null }).overall_score   ?? null,
-    // Rewrite the legacy /static/images/ path to the current /images/ path.
-    // Images were moved from webapp/static/images/ to public/images/ during the rewrite.
-    image_url: m.image_url?.replace('/static/images/', '/images/') ?? null,
+    // Rewrite the legacy /static/images/ path to the web-optimised WebPs.
+    image_url: m.image_url
+      ? m.image_url.replace('/static/images/', '/images-webp/').replace(/\.(jpe?g|png)$/i, '.webp')
+      : null,
     factions: m.miniature_factions.map((mf) => mf.factions.name),
     clicks: m.click_stats.map((cs) => ({
       click_number: cs.click_number,
