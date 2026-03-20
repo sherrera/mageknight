@@ -21,8 +21,8 @@ app.use(logger);
 // Serve images and the built Vite client. Images are in public/images/ and
 // the Vite build output lands in dist/client/ — both served as static.
 // 30-day cache for images; versioned JS/CSS assets get 1 year.
-app.use(express.static(path.join(__dirname, '../../public'), { maxAge: '30d' }));
-app.use(express.static(path.join(__dirname, '../../dist/client'), { maxAge: '1y' }));
+app.use(express.static(path.join(process.cwd(), 'public'), { maxAge: '30d' }));
+app.use(express.static(path.join(process.cwd(), 'dist/client'), { maxAge: '1y' }));
 
 const PUBLIC_MODE = process.env.PUBLIC_MODE === 'true';
 
