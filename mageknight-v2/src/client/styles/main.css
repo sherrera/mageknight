@@ -65,6 +65,24 @@ body {
 
 .app-header__actions {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-x-small);
+}
+
+.app-header__actions a {
+  display: inline-flex;
+  align-items: center;
+  color: var(--sl-color-neutral-600);
+  font-size: 20px;
+  padding: 4px;
+  border-radius: var(--sl-border-radius-medium);
+  transition: color 0.15s;
+  text-decoration: none;
+}
+
+.app-header__actions a:hover {
+  color: var(--sl-color-neutral-900);
 }
 
 /* -------------------------------------------------------------------------
