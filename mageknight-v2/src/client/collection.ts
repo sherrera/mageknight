@@ -34,6 +34,7 @@ interface CollectionItem {
 // ---------------------------------------------------------------------------
 
 const collectionMap = new Map<number, CollectionItem>();
+let publicMode = false;
 let filterState: FilterState = defaultState();
 let sortField: SortField = 'name';
 let sortOrder: 'asc' | 'desc' = 'asc';
@@ -117,6 +118,7 @@ async function clearTransactions(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 function quantityActions(item: CollectionItem): string {
+  if (publicMode) return `<span class="quantity-value">×${item.quantity}</span>`;
   const id = item.miniature.id;
   return `
     <div class="quantity-controls">
@@ -311,6 +313,12 @@ function applyStatTiers(on: boolean): void {
 async function init(): Promise<void> {
   applyTheme(localStorage.getItem('theme') === 'dark');
   applyStatTiers(localStorage.getItem('statTiers') === '1');
+
+  const config = await fetch('/api/config').then((r) => r.json()).catch(() => ({}));
+  publicMode = config.publicMode === true;
+  if (publicMode) {
+    document.querySelectorAll<HTMLElement>('[data-public-hide]').forEach((el) => el.remove());
+  }
 
   document.getElementById('btn-dark-mode')!.addEventListener('click', () => {
     applyTheme(!document.documentElement.classList.contains('sl-theme-dark'));

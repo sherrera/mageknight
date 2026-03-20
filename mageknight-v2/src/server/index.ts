@@ -20,8 +20,30 @@ app.use(logger);
 
 // Serve images and the built Vite client. Images are in public/images/ and
 // the Vite build output lands in dist/client/ — both served as static.
-app.use(express.static(path.join(__dirname, '../../public')));
-app.use(express.static(path.join(__dirname, '../../dist/client')));
+// 30-day cache for images; versioned JS/CSS assets get 1 year.
+app.use(express.static(path.join(__dirname, '../../public'), { maxAge: '30d' }));
+app.use(express.static(path.join(__dirname, '../../dist/client'), { maxAge: '1y' }));
+
+const PUBLIC_MODE = process.env.PUBLIC_MODE === 'true';
+
+// In public mode: block all writes and hide army/abilities APIs.
+if (PUBLIC_MODE) {
+  app.use((req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      res.status(403).json({ error: 'Read-only mode' });
+      return;
+    }
+    next();
+  });
+  app.use(['/api/armies', '/api/abilities'], (_req, res) => {
+    res.status(403).json({ error: 'Not available in public mode' });
+  });
+}
+
+// Exposes server-side feature flags to the client at runtime.
+app.get('/api/config', (_req, res) => {
+  res.json({ publicMode: PUBLIC_MODE });
+});
 
 // Mount routers — each file owns one domain of the API
 app.use('/api/minis', minisRouter);
