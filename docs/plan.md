@@ -189,12 +189,34 @@ Lets the user group owned minis into named armies with point totals.
 
 ---
 
-### Phase 5 — Metrics (Deferred)
+### Phase 5 — Metrics
 
-Not started. Requires a separate design session to decide what the metrics should measure and how to compute them. The existing `archive/scripts/compute_metrics.py` can serve as a reference but should not be ported as-is.
+Implemented. Power scores computed per-mini and stored in the DB. Displayed as score badges on cards with a toggleable stat-tier highlighting system.
 
-- [ ] **5.0** Design session: decide metric definitions before any code is written
-- [ ] *(subtasks TBD after design session)*
+- [x] **5.1** `POST /api/minis/metrics/regenerate` — recomputes scores, admin-protected
+- [x] **5.2** Score badges on mini cards: peak, sustained, overall
+- [x] **5.3** Stat tier cell highlighting (rgba backgrounds, 3 green + 3 red intensities)
+- [x] **5.4** Global toggle button (palette icon) persisted in localStorage, off by default
+
+---
+
+### Phase 7 — Image Pipeline
+
+All 1,177 miniature images processed for web delivery.
+
+- [x] **7.1** Resize originals 1500×1500 → 500×500 JPEG (scripts/process_images_step1_resize.py)
+- [x] **7.2** Remove backgrounds with rembg/BiRefNet GPU model (scripts/run_step2.sh)
+- [x] **7.3** Convert to WebP quality 82 — 84% smaller than PNG (scripts/process_images_step3_webp.py)
+- [x] **7.4** Serve images-webp/ via Express static with 30-day browser cache
+
+---
+
+### Phase 8 — Deployment
+
+- [x] **8.1** PUBLIC_MODE env flag — hides army builder + abilities, makes collection read-only
+- [x] **8.2** Deploy to Railway with Postgres addon
+- [x] **8.3** Mobile-responsive layout (768px breakpoint, collapsible filter panel)
+- [x] **8.4** Push to GitHub (sherrera/mageknight), auto-deploy via `railway up`
 
 ---
 
@@ -210,7 +232,7 @@ Not started. No active use case at the time of this writing.
 
 | Decision | Choice | Why |
 |---|---|---|
-| Deployment | Local only | Personal tool; hosting adds complexity with no benefit |
+| Deployment | Railway | Free tier ($5/month credit) covers a low-traffic personal app; Postgres addon handles persistence |
 | Database | Keep PostgreSQL | Already populated with 1,084 minis and user data; good for future analytical queries |
 | Metrics | Deferred | Current methodology (power/efficiency scores) not fully satisfying; will redesign before reimplementing |
 | Shopping list | Deferred | No active purchase plans; not worth building now |
@@ -220,6 +242,9 @@ Not started. No active use case at the time of this writing.
 | Single process | Express serves both API and frontend | No CORS config; simpler local dev; no reason to separate for a personal tool |
 | Images | Move to `public/images/` | Storage is not a concern; cleaner than referencing archive/ |
 | Old code | Moved to `archive/` | Out of the way but preserved for reference (scraper still works, data pipeline still there) |
+| Images | Background-removed WebP in public/images-webp/ | Transparent backgrounds look great in dark mode; WebP is 84% smaller than PNG; originals untouched in public/images/ |
+| Image pipeline | 3-step Python scripts (resize → rembg → WebP) | Separating steps allows resuming if interrupted; BiRefNet handles mixed-quality images better than flood-fill |
+| Public mode | PUBLIC_MODE env var, runtime /api/config | Lets the same codebase run as a public read-only site (Railway) and a full local tool without separate builds |
 | Mini card | Extracted to `src/client/components/mini-card.ts` before Phase 3 | Browse, Collection, and Army Builder all show cards — shared component means card changes happen once |
 | Filter panel | Extracted to `src/client/components/filter-panel.ts` in Phase 3 | Both Browse and Collection need the same filters; shared component keeps filter state logic and HTML in one place |
 | Collection filtering | Client-side via `applyFilters()` (not a server round-trip) | 119 items fits in memory; no latency for filter changes, and the logic mirrors the server filter for consistency |
