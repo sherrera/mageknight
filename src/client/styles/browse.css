@@ -30,6 +30,24 @@
   gap: var(--sl-spacing-small);
 }
 
+@media (max-width: 768px) {
+  .browse-layout {
+    grid-template-columns: 1fr;
+    padding: var(--sl-spacing-small);
+    gap: var(--sl-spacing-small);
+  }
+
+  /* Count on its own row above filter/sort controls */
+  .results-header {
+    flex-wrap: wrap;
+  }
+
+  .browse-results-count {
+    width: 100%;
+    order: -1;
+  }
+}
+
 /* ---- Owned indicator (injected via card actions slot) ---- */
 
 .owned-badge {

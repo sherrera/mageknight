@@ -49,7 +49,10 @@
            ---------------------------------------------------------------- -->
       <div>
         <div class="results-header">
-          <div>
+          <sl-button id="btn-filter-toggle" class="btn-filter-toggle" size="small" variant="default" outline>
+            <sl-icon slot="prefix" name="funnel"></sl-icon>Filters
+          </sl-button>
+          <div class="results-info">
             <h2 class="collection-title">My Collection</h2>
             <p class="results-count" id="results-count">Loading…</p>
           </div>
@@ -73,6 +76,7 @@
             name="clock-history"
             label="View transaction history"
             title="Transaction history"
+            data-public-hide
           ></sl-icon-button>
         </div>
 

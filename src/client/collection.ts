@@ -326,6 +326,9 @@ async function init(): Promise<void> {
   document.getElementById('btn-stat-tiers')!.addEventListener('click', () => {
     applyStatTiers(!document.documentElement.classList.contains('stat-tiers'));
   });
+  document.getElementById('btn-filter-toggle')?.addEventListener('click', () => {
+    document.getElementById('filter-container')!.classList.toggle('is-open');
+  });
 
   document.getElementById('cards-grid')!.addEventListener('click', handleGridClick);
 
@@ -349,7 +352,7 @@ async function init(): Promise<void> {
   const dialog   = document.getElementById('history-dialog') as HTMLElement & { show(): void; hide(): void };
   const histList = document.getElementById('history-list')!;
 
-  document.getElementById('btn-history')!.addEventListener('click', async () => {
+  document.getElementById('btn-history')?.addEventListener('click', async () => {
     histList.innerHTML = '<p class="history-empty">Loading…</p>';
     dialog.show();
     try {
@@ -359,8 +362,8 @@ async function init(): Promise<void> {
       histList.innerHTML = '<p class="history-empty">Failed to load history.</p>';
     }
   });
-  document.getElementById('btn-close-history')!.addEventListener('click', () => dialog.hide());
-  document.getElementById('btn-clear-history')!.addEventListener('click', async () => {
+  document.getElementById('btn-close-history')?.addEventListener('click', () => dialog.hide());
+  document.getElementById('btn-clear-history')?.addEventListener('click', async () => {
     try {
       await clearTransactions();
       histList.innerHTML = renderHistoryList([]);

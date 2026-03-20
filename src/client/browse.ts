@@ -167,6 +167,9 @@ async function init(): Promise<void> {
   document.getElementById('btn-stat-tiers')!.addEventListener('click', () => {
     applyStatTiers(!document.documentElement.classList.contains('stat-tiers'));
   });
+  document.getElementById('btn-filter-toggle')?.addEventListener('click', () => {
+    document.getElementById('filter-container')!.classList.toggle('is-open');
+  });
 
   // Sort controls
   document.getElementById('btn-sort-asc')!.addEventListener('click', () => { setSortOrder('asc'); refresh(); });
