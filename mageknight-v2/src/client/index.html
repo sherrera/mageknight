@@ -59,7 +59,10 @@
            ---------------------------------------------------------------- -->
       <div>
         <div class="results-header">
-          <span class="results-count" id="results-count">Loading…</span>
+          <span class="results-count browse-results-count" id="results-count">Loading…</span>
+          <sl-button id="btn-filter-toggle" class="btn-filter-toggle" size="small" variant="default" outline>
+            <sl-icon slot="prefix" name="funnel"></sl-icon>Filters
+          </sl-button>
           <div class="results-sort">
             <sl-select id="filter-sort-by" size="small" value="name" style="width: 150px">
               <sl-option value="name">Name</sl-option>

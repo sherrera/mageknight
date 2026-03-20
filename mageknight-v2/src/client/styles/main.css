@@ -137,6 +137,61 @@ body {
   white-space: nowrap;
 }
 
+/* Filter toggle — only visible on mobile */
+.btn-filter-toggle {
+  display: none;
+}
+
+/* -------------------------------------------------------------------------
+   Mobile — single breakpoint at 768px
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  /* Header: single row, title hidden, nav + actions share the space */
+  .app-header {
+    padding: var(--sl-spacing-x-small) var(--sl-spacing-medium);
+    gap: var(--sl-spacing-small);
+  }
+
+  .app-header__title {
+    display: none;
+  }
+
+  .app-header__nav {
+    flex: 1;
+    gap: var(--sl-spacing-x-small);
+  }
+
+  .app-header__nav a {
+    font-size: var(--sl-font-size-small);
+    padding: var(--sl-spacing-x-small) var(--sl-spacing-small);
+  }
+
+  /* Filter sidebar: hidden by default on mobile, shown when toggled */
+  .filters {
+    display: none;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+  }
+
+  .filters.is-open {
+    display: flex;
+  }
+
+  /* Show filter toggle button */
+  .btn-filter-toggle {
+    display: inline-flex;
+  }
+
+  /* Cards: single column with breathing room on the sides */
+  .cards-grid {
+    grid-template-columns: 1fr;
+    padding: 0 var(--sl-spacing-x-small);
+  }
+}
+
 /* Utility */
 .sr-only {
   position: absolute;
