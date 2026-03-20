@@ -4,6 +4,22 @@ All endpoints return JSON. Errors return `{ "error": "message" }` with an approp
 
 ---
 
+## Config
+
+### `GET /api/config`
+
+Returns server-side feature flags for the client to consume at runtime.
+
+**Response**
+```json
+{ "publicMode": false }
+```
+
+`publicMode: true` is set via the `PUBLIC_MODE=true` environment variable. When true,
+all non-GET requests return `403` and army/abilities endpoints are blocked.
+
+---
+
 ## Health
 
 ### `GET /api/health`
@@ -58,7 +74,7 @@ Returns miniatures with click stats. All query parameters are optional.
 | `max_range` | number | Range value on the miniature itself ≤ this value |
 | `range_targets` | number (repeatable) | Filter to minis that target any of the given counts |
 | `min_clicks` | number | Minimum number of live (non-KO) clicks |
-| `sort_by` | `name` \| `point_cost` \| `set_name` \| `rank` | Default: `name` |
+| `sort_by` | `name` \| `point_cost` \| `set_name` \| `rank` \| `overall_score` \| `peak_score` \| `sustained_score` | Default: `name` |
 | `sort_order` | `asc` \| `desc` | Default: `asc` |
 
 Stat minimum filters are evaluated independently: `min_speed=8&min_attack=7` means
@@ -86,7 +102,7 @@ relation in a WHERE clause.
     "arc": 90,
     "range": 0,
     "range_targets": 1,
-    "image_url": "/images/mkd/1.jpeg",
+    "image_url": "/images-webp/mkd/1.webp",
     "factions": ["Mage Spawn"],
     "clicks": [
       {
@@ -150,6 +166,45 @@ Sets quantity directly. Used by the +/- controls.
 ### `DELETE /api/collection/:miniatureId`
 
 Removes the mini from the collection entirely. Returns `204 No Content`.
+
+---
+
+### `GET /api/collection/transactions`
+
+Returns all transaction log entries, newest first.
+
+**Response**
+```json
+[{
+  "id": 1,
+  "timestamp": "2026-03-18T12:00:00.000Z",
+  "action": "add",
+  "miniatureId": 42,
+  "miniatureName": "GNOLL HUNTER",
+  "newQty": 1,
+  "prevQty": 0
+}]
+```
+
+Actions: `add`, `increment`, `decrement`, `set`, `remove`.
+
+---
+
+### `DELETE /api/collection/transactions`
+
+Clears the entire transaction log. Returns `204 No Content`.
+
+---
+
+## Metrics
+
+### `POST /api/minis/metrics/regenerate`
+
+Recomputes peak, sustained, and overall scores for all miniatures and writes them
+to the database. Protected — requires either `NODE_ENV !== 'production'` or the
+`x-admin-secret` header matching the `ADMIN_SECRET` env var.
+
+**Response** `{ "updated": 1084 }`
 
 ---
 
