@@ -20,7 +20,15 @@ app.use(logger);
 
 // Serve images and the built Vite client. Images are in public/images/ and
 // the Vite build output lands in dist/client/ — both served as static.
-// 30-day cache for images; versioned JS/CSS assets get 1 year.
+// HTML files get no-cache so browsers always revalidate after a deploy.
+// Vite hashes JS/CSS filenames on change, so they can be cached for a year.
+// Images are stable; 30-day cache is a safe middle ground.
+app.use((req, res, next) => {
+  if (req.path.endsWith('.html') || req.path === '/') {
+    res.setHeader('Cache-Control', 'no-cache');
+  }
+  next();
+});
 app.use(express.static(path.join(process.cwd(), 'public'), { maxAge: '30d' }));
 app.use(express.static(path.join(process.cwd(), 'dist/client'), { maxAge: '1y' }));
 
