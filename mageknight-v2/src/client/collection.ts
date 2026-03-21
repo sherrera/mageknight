@@ -416,7 +416,7 @@ async function init(): Promise<void> {
   // the minis API (same data source as Browse) — factions, ranks, abilities,
   // and range targets. Filtering runs client-side against the loaded collection.
   const filterOptions = await fetchFilterOptions().catch(() => ({
-    factions: [], ranks: [], abilities: [], rangeTargets: [],
+    factions: [], ranks: [], abilities: [], rangeTargets: [], sets: [],
   }));
 
   createFilterPanel(

@@ -19,6 +19,7 @@ export interface FilterState {
   factions: string[];
   ranks: string[];
   abilities: string[];   // AND semantics — mini must have all selected abilities
+  sets: string[];        // DB keys (alpha, mkd, …) — OR semantics
   minCost: string;
   maxCost: string;
   minSpeed: string;
@@ -36,6 +37,7 @@ export interface FilterOptions {
   ranks: string[];
   abilities: Array<{ name: string; color: string | null }>;
   rangeTargets: number[];
+  sets: Array<{ key: string; name: string }>;
 }
 
 export interface FilterPanelController {
@@ -49,6 +51,7 @@ export function defaultState(): FilterState {
     factions: [],
     ranks: [],
     abilities: [],
+    sets: [],
     minCost: '',
     maxCost: '',
     minSpeed: '',
@@ -96,6 +99,8 @@ export function applyFilters<T extends Filterable>(items: T[], state: FilterStat
     if (state.name && !(m.name ?? '').toLowerCase().includes(state.name.toLowerCase())) return false;
 
     if (state.factions.length > 0 && !state.factions.some((f) => m.factions.includes(f))) return false;
+
+    if (state.sets.length > 0 && !state.sets.includes(m.set_name ?? '')) return false;
 
     if (state.ranks.length > 0 && !state.ranks.some(
       (r) => (m.rank ?? '').toUpperCase() === r.toUpperCase(),
@@ -202,6 +207,7 @@ export function createFilterPanel(
   getM('fp-faction').addEventListener('sl-change',  () => { state.factions = getM('fp-faction').value.map((i) => options.factions[Number(i)]).filter(Boolean); notify(); });
   getM('fp-rank').addEventListener('sl-change',     () => { state.ranks = getM('fp-rank').value; notify(); });
   getM('fp-ability').addEventListener('sl-change',  () => { state.abilities = getM('fp-ability').value.map((i) => options.abilities[Number(i)]?.name).filter(Boolean) as string[]; notify(); });
+  getM('fp-set').addEventListener('sl-change',      () => { state.sets = getM('fp-set').value.map((i) => options.sets[Number(i)]?.key).filter(Boolean) as string[]; notify(); });
   getM('fp-targets').addEventListener('sl-change',  () => { state.rangeTargets = getM('fp-targets').value; notify(); });
 
   // Number inputs — debounced
@@ -235,6 +241,7 @@ export function createFilterPanel(
     (getM('fp-faction') as unknown as { value: string[] }).value = [];
     (getM('fp-rank') as unknown as { value: string[] }).value = [];
     (getM('fp-ability') as unknown as { value: string[] }).value = [];
+    (getM('fp-set') as unknown as { value: string[] }).value = [];
     (getM('fp-targets') as unknown as { value: string[] }).value = [];
     for (const [id] of numFields) {
       (get(id) as unknown as { value: string }).value = '';
@@ -267,6 +274,11 @@ function renderHTML(options: FilterOptions): string {
         <span class="ability-swatch" style="background:${a.color ?? '#aaa'}"></span>${a.name}
       </sl-option>`).join('');
 
+  // Sets use index values (like factions/abilities) because keys can contain
+  // characters that Shoelace might handle inconsistently as option values.
+  const setOptions = (options.sets ?? [])
+    .map((s, i) => `<sl-option value="${i}">${s.name}</sl-option>`).join('');
+
   const targetOptions = options.rangeTargets
     .map((t) => `<sl-option value="${t}">${t} target${t > 1 ? 's' : ''}</sl-option>`).join('');
 
@@ -286,6 +298,13 @@ function renderHTML(options: FilterOptions): string {
       <p class="filters__section-label">Rank</p>
       <sl-select id="fp-rank" multiple clearable size="small" placeholder="All ranks">
         ${rankOptions}
+      </sl-select>
+    </div>
+
+    <div>
+      <p class="filters__section-label">Set</p>
+      <sl-select id="fp-set" multiple clearable size="small" placeholder="All sets">
+        ${setOptions}
       </sl-select>
     </div>
 

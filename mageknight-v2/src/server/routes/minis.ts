@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Prisma } from '@prisma/client';
 import db from '../db';
-import { MINIATURE_INCLUDE, formatMiniature } from '../lib/miniature-format';
+import { MINIATURE_INCLUDE, formatMiniature, SET_NAMES } from '../lib/miniature-format';
 
 const router = Router();
 
@@ -12,7 +12,7 @@ const router = Router();
 // ---------------------------------------------------------------------------
 router.get('/filters', async (_req, res, next) => {
   try {
-    const [factions, rawRanks, abilities, rawTargets] = await Promise.all([
+    const [factions, rawRanks, abilities, rawTargets, rawSets] = await Promise.all([
       db.factions.findMany({ orderBy: { name: 'asc' }, select: { name: true } }),
       db.miniatures.findMany({
         where: { rank: { not: null } },
@@ -29,6 +29,12 @@ router.get('/filters', async (_req, res, next) => {
         select: { range_targets: true },
         orderBy: { range_targets: 'asc' },
       }),
+      db.miniatures.findMany({
+        where: { set_name: { not: null } },
+        distinct: ['set_name'],
+        select: { set_name: true },
+        orderBy: { set_name: 'asc' },
+      }),
     ]);
 
     // The scraper produced inconsistent rank casing (e.g. both "WEAK" and "Weak").
@@ -37,11 +43,17 @@ router.get('/filters', async (_req, res, next) => {
       rawRanks.map((r) => r.rank?.toUpperCase()).filter(Boolean) as string[],
     );
 
+    // Build set list sorted by display name, pairing key with display name
+    const sets = (rawSets.map((s) => s.set_name).filter(Boolean) as string[])
+      .map((key) => ({ key, name: SET_NAMES[key] ?? key }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
     res.json({
       factions: factions.map((f) => f.name),
       ranks: Array.from(rankSet).sort(),
       abilities: abilities.map((a) => ({ name: a.name, color: a.color })),
       rangeTargets: rawTargets.map((r) => r.range_targets).filter(Boolean) as number[],
+      sets,
     });
   } catch (err) {
     next(err);
@@ -68,6 +80,7 @@ router.get('/', async (req, res, next) => {
       faction,
       rank,
       ability,
+      set,
       min_cost,
       max_cost,
       min_speed,
@@ -85,6 +98,7 @@ router.get('/', async (req, res, next) => {
     const factions     = toArray(faction);
     const ranks        = toArray(rank);
     const abilities    = toArray(ability);
+    const sets         = toArray(set);
     const rangeTargets = toArray(range_targets).map(Number).filter((n) => !isNaN(n));
 
     const where: Prisma.miniaturesWhereInput = {};
@@ -119,6 +133,10 @@ router.get('/', async (req, res, next) => {
 
     if (rangeTargets.length > 0) {
       where.range_targets = { in: rangeTargets };
+    }
+
+    if (sets.length > 0) {
+      where.set_name = { in: sets };
     }
 
     // Each selected ability is a separate AND condition — the mini must have

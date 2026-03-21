@@ -9,6 +9,19 @@
 
 import db from '../db';
 
+// Maps the abbreviated set keys stored in the DB to their community display names.
+// Image paths also use these keys, so we keep them in the DB and map in code.
+export const SET_NAMES: Record<string, string> = {
+  alpha:   'Rebellion',
+  lancers: 'Lancers',
+  minions: 'Minions',
+  mkd:     'Dungeons',
+  pyramid: 'Pyramid',
+  siniste: 'Sinister',
+  up:      'Uprising',
+  ww:      'Whirlwind',
+};
+
 // The include shape is defined once and exported so routes can pass it
 // directly to Prisma — this ensures the formatter's expectations always
 // match what the query actually returns.
@@ -49,6 +62,7 @@ export function formatMiniature(m: MiniatureRow) {
     id: m.id,
     name: m.name,
     set_name: m.set_name,
+    set_display_name: m.set_name ? (SET_NAMES[m.set_name] ?? m.set_name) : null,
     rank: m.rank,
     point_cost: m.point_cost,
     collector_number: m.collector_number,

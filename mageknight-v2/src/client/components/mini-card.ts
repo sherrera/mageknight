@@ -32,6 +32,7 @@ export interface Miniature {
   id: number;
   name: string | null;
   set_name: string | null;
+  set_display_name: string | null;
   rank: string | null;
   point_cost: number | null;
   collector_number: number | null;
@@ -208,7 +209,7 @@ export function renderCard(mini: Miniature, options: CardOptions = {}): string {
   const img       = mini.image_url ?? '/images/No_Image_Available.jpg';
   const name      = mini.name ?? 'Unknown';
   const rank      = mini.rank?.toUpperCase() ?? '?';
-  const setLabel  = [mini.set_name, mini.collector_number != null ? `#${mini.collector_number}` : null]
+  const setLabel  = [mini.set_display_name ?? mini.set_name, mini.collector_number != null ? `#${mini.collector_number}` : null]
     .filter(Boolean).join(' ');
 
   const factionTags = mini.factions

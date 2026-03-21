@@ -82,6 +82,7 @@ async function fetchMinis(state: FilterState): Promise<Miniature[]> {
   state.factions.forEach((f) => params.append('faction',       f));
   state.ranks.forEach((r)    => params.append('rank',          r));
   state.abilities.forEach((a)=> params.append('ability',       a));
+  state.sets.forEach((s)     => params.append('set',           s));
   state.rangeTargets.forEach((t) => params.append('range_targets', t));
 
   params.set('sort_by',    sortBy);
@@ -195,7 +196,7 @@ async function init(): Promise<void> {
 
   // Load filter options and mount the shared panel
   const filterOptions = await fetchFilters().catch(() => ({
-    factions: [], ranks: [], abilities: [], rangeTargets: [],
+    factions: [], ranks: [], abilities: [], rangeTargets: [], sets: [],
   }));
 
   let filterState: FilterState = defaultState();
