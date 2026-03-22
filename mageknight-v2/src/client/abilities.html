@@ -18,7 +18,7 @@
       <nav class="app-header__nav">
         <a href="/">Browse</a>
         <a href="/collection.html">Collection</a>
-        <a href="/armies.html">Army Builder</a>
+        <a href="/armies.html" data-public-hide>Army Builder</a>
         <a href="/abilities.html" class="active">Abilities</a>
       </nav>
       <div class="app-header__actions">
@@ -28,40 +28,45 @@
     </header>
 
     <main class="abilities-layout">
-      <div class="abilities-header">
-        <div>
-          <h2 class="abilities-title">Ability Categories</h2>
-          <p class="abilities-subtitle">
-            Adjust how each ability influences the Peak, Sustained, and Overall scores.
-            Changes take effect when you regenerate metrics.
-          </p>
+
+      <!-- Reference section — always visible -->
+      <div id="abilities-reference"></div>
+
+      <!-- Management section — private only -->
+      <div id="abilities-management" data-public-hide>
+        <div class="abilities-header">
+          <div>
+            <h2 class="abilities-title">Ability Categories</h2>
+            <p class="abilities-subtitle">
+              Adjust how each ability influences the Peak, Sustained, and Overall scores.
+              Changes take effect when you regenerate metrics.
+            </p>
+          </div>
+          <sl-button id="btn-regenerate" variant="primary">
+            <sl-icon slot="prefix" name="arrow-clockwise"></sl-icon>
+            Save &amp; Regenerate
+          </sl-button>
         </div>
-        <sl-button id="btn-regenerate" variant="primary">
-          <sl-icon slot="prefix" name="arrow-clockwise"></sl-icon>
-          Save &amp; Regenerate
-        </sl-button>
+
+        <div id="regen-status" class="regen-status" style="display:none"></div>
+
+        <div class="category-legend">
+          <span class="cat-pill cat--high">High</span> large unconditional game impact
+          <span class="cat-sep">·</span>
+          <span class="cat-pill cat--medium">Medium</span> meaningful but conditional
+          <span class="cat-sep">·</span>
+          <span class="cat-pill cat--low">Low</span> minor / situational
+          <span class="cat-sep">·</span>
+          <span class="cat-pill cat--neutral">Neutral</span> no effect on scores
+          <span class="cat-sep">·</span>
+          <span class="cat-pill cat--negative">Negative</span> clear downside
+        </div>
+
+        <div id="abilities-table-wrap">
+          <p class="state-message">Loading abilities…</p>
+        </div>
       </div>
 
-      <!-- Status banner shown after regeneration -->
-      <div id="regen-status" class="regen-status" style="display:none"></div>
-
-      <!-- Category legend -->
-      <div class="category-legend">
-        <span class="cat-pill cat--high">High</span> large unconditional game impact
-        <span class="cat-sep">·</span>
-        <span class="cat-pill cat--medium">Medium</span> meaningful but conditional
-        <span class="cat-sep">·</span>
-        <span class="cat-pill cat--low">Low</span> minor / situational
-        <span class="cat-sep">·</span>
-        <span class="cat-pill cat--neutral">Neutral</span> no effect on scores
-        <span class="cat-sep">·</span>
-        <span class="cat-pill cat--negative">Negative</span> clear downside
-      </div>
-
-      <!-- Ability table — populated by abilities.ts -->
-      <div id="abilities-table-wrap">
-        <p class="state-message">Loading abilities…</p>
-      </div>
     </main>
 
     <script type="module" src="./abilities.ts"></script>

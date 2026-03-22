@@ -1,11 +1,14 @@
 /**
- * Ability category management page.
+ * Abilities page.
  *
- * Shows a table of all abilities with their current weight category.
- * Changing a category immediately PATCHes the server.
- * "Save & Regenerate" triggers POST /api/minis/metrics/regenerate to
- * recompute all three scores with the latest categories.
+ * Two sections:
+ * 1. Reference — renders all ability descriptions from the static JSON,
+ *    always visible (public and private).
+ * 2. Management — ability weight categories + metrics regeneration,
+ *    shown only when publicMode is false.
  */
+
+import referenceData from './data/abilities-reference.json';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -157,6 +160,69 @@ function showStatus(message: string, variant: 'success' | 'danger'): void {
 }
 
 // ---------------------------------------------------------------------------
+// Reference section
+// ---------------------------------------------------------------------------
+
+function renderReference(colorMap: Map<string, string>): string {
+  const categories = referenceData.categories.map((cat) => `
+    <section class="ref-category">
+      <h3 class="ref-category__title">${cat.label} Abilities</h3>
+      <div class="ref-ability-list">
+        ${cat.abilities.map((ab) => {
+          const color = colorMap.get(ab.name) ?? '#6b7280';
+          return `
+          <div class="ref-ability" data-ability-name="${ab.name.toLowerCase()}">
+            <div class="ref-ability__header">
+              <span class="ref-ability__swatch ref-ability__swatch--${ab.symbol}" style="background:${color}"></span>
+              <span class="ref-ability__name">${ab.name}</span>
+            </div>
+            <p class="ref-ability__summary">${ab.summary}</p>
+            <p class="ref-ability__description">${ab.description}</p>
+          </div>`;
+        }).join('')}
+      </div>
+    </section>`).join('');
+
+  return `
+    <div class="ref-filter-wrap">
+      <sl-input id="ref-filter" placeholder="Filter abilities…" clearable size="small">
+        <sl-icon slot="prefix" name="search"></sl-icon>
+      </sl-input>
+      <div class="ref-symbol-legend">
+        <span class="ref-symbol-legend__item">
+          <span class="ref-ability__swatch ref-ability__swatch--square" style="background:#6b7280"></span> Original
+        </span>
+        <span class="ref-symbol-legend__item">
+          <span class="ref-ability__swatch ref-ability__swatch--circle" style="background:#6b7280"></span> Whirlwind
+        </span>
+      </div>
+    </div>
+    ${categories}`;
+}
+
+function wireFilter(): void {
+  const input = document.getElementById('ref-filter') as HTMLElement & { value: string };
+  if (!input) return;
+
+  function applyFilter() {
+    const q = input.value.toLowerCase().trim();
+    document.querySelectorAll<HTMLElement>('.ref-ability').forEach((el) => {
+      const name = el.dataset.abilityName ?? '';
+      el.style.display = !q || name.includes(q) ? '' : 'none';
+    });
+    // Hide category headers that have no visible abilities
+    document.querySelectorAll<HTMLElement>('.ref-category').forEach((section) => {
+      const visible = Array.from(section.querySelectorAll<HTMLElement>('.ref-ability'))
+        .some((el) => el.style.display !== 'none');
+      section.style.display = visible ? '' : 'none';
+    });
+  }
+
+  input.addEventListener('sl-input', applyFilter);
+  input.addEventListener('sl-clear', applyFilter);
+}
+
+// ---------------------------------------------------------------------------
 // Boot
 // ---------------------------------------------------------------------------
 
@@ -165,6 +231,24 @@ async function init(): Promise<void> {
   document.getElementById('btn-dark-mode')!.addEventListener('click', () => {
     applyTheme(!document.documentElement.classList.contains('sl-theme-dark'));
   });
+
+  const config = await fetch('/api/config').then((r) => r.json()).catch(() => ({}));
+  const publicMode = config.publicMode === true;
+
+  if (publicMode) {
+    document.querySelectorAll<HTMLElement>('[data-public-hide]').forEach((el) => el.remove());
+  }
+
+  // Fetch ability colours from API — available in both public and private mode.
+  // Falls back to grey if the fetch fails so the page still renders.
+  const apiAbilities: Ability[] = await fetchAbilities().catch(() => []);
+  const colorMap = new Map(apiAbilities.map((a) => [a.name, a.color ?? '#6b7280']));
+
+  document.getElementById('abilities-reference')!.innerHTML = renderReference(colorMap);
+  wireFilter();
+
+  // Management section — skip in public mode
+  if (publicMode) return;
 
   const wrap = document.getElementById('abilities-table-wrap')!;
 

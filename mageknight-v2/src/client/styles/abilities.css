@@ -1,6 +1,113 @@
 /* -------------------------------------------------------------------------
-   Abilities management page
+   Abilities page — reference + management sections
    ------------------------------------------------------------------------- */
+
+/* ---- Reference section ---- */
+
+.ref-category {
+  margin-bottom: var(--sl-spacing-2x-large);
+}
+
+.ref-category__title {
+  font-size: var(--sl-font-size-large);
+  font-weight: var(--sl-font-weight-bold);
+  color: var(--sl-color-primary-700);
+  margin: 0 0 var(--sl-spacing-medium);
+  padding-bottom: var(--sl-spacing-x-small);
+  border-bottom: 2px solid var(--sl-color-primary-200);
+}
+
+.ref-ability-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--sl-spacing-medium);
+}
+
+.ref-filter-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-large);
+  margin-bottom: var(--sl-spacing-large);
+  flex-wrap: wrap;
+}
+
+.ref-filter-wrap sl-input {
+  max-width: 320px;
+  flex: 1;
+}
+
+.ref-symbol-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-medium);
+  font-size: var(--sl-font-size-x-small);
+  color: var(--sl-color-neutral-500);
+  white-space: nowrap;
+}
+
+.ref-symbol-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ref-ability {
+  padding: var(--sl-spacing-medium);
+  border: 1px solid var(--sl-color-neutral-200);
+  border-radius: var(--sl-border-radius-large);
+  background: var(--sl-color-neutral-0);
+}
+
+.ref-ability__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-spacing-x-small);
+  margin-bottom: 4px;
+}
+
+.ref-ability__swatch {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.ref-ability__swatch--square {
+  border-radius: 2px;
+}
+
+.ref-ability__swatch--circle {
+  border-radius: 50%;
+}
+
+.ref-ability__name {
+  font-size: var(--sl-font-size-small);
+  font-weight: var(--sl-font-weight-bold);
+  letter-spacing: 0.03em;
+}
+
+.ref-ability__summary {
+  margin: 0 0 var(--sl-spacing-x-small);
+  font-size: var(--sl-font-size-small);
+  font-style: italic;
+  color: var(--sl-color-neutral-600);
+}
+
+.ref-ability__description {
+  margin: 0;
+  font-size: var(--sl-font-size-x-small);
+  color: var(--sl-color-neutral-700);
+  line-height: 1.6;
+}
+
+/* Separator between reference and management sections */
+#abilities-management {
+  margin-top: var(--sl-spacing-3x-large);
+  padding-top: var(--sl-spacing-2x-large);
+  border-top: 2px solid var(--sl-color-neutral-200);
+}
+
+/* -------------------------------------------------------------------------
 
 .abilities-layout {
   padding: var(--sl-spacing-large);

@@ -123,7 +123,7 @@ function statTierClass(stat: 'speed' | 'attack' | 'defense' | 'damage', val: num
 function abilityChip(ability: Ability | null): string {
   if (!ability) return '';
   const bg = ability.color ?? '#6b7280';
-  return `<span class="ability-chip" style="background-color:${bg}" title="${ability.name}">${ability.name}</span>`;
+  return `<span class="ability-chip" style="background-color:${bg}" data-ability-name="${ability.name}" title="${ability.name}">${ability.name}</span>`;
 }
 
 /** Returns a CSS class suffix that drives the rank's accent colour. */
@@ -204,6 +204,56 @@ function renderScores(mini: Miniature): string {
 // ---------------------------------------------------------------------------
 // Card
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Ability popup — call once per page to wire up a shared sl-dialog that
+// opens whenever an ability chip is clicked anywhere on the page.
+// ---------------------------------------------------------------------------
+
+import referenceData from '../data/abilities-reference.json';
+
+const abilityMap = new Map(
+  referenceData.categories.flatMap((cat) =>
+    cat.abilities.map((ab) => [ab.name, ab]),
+  ),
+);
+
+export function setupAbilityPopup(): void {
+  // Plain div overlay — avoids Shoelace's lazy-load delay on first open.
+  const overlay = document.createElement('div');
+  overlay.id = 'ability-popup';
+  overlay.className = 'ability-popup';
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('role', 'dialog');
+  overlay.innerHTML = `
+    <div class="ability-popup__backdrop"></div>
+    <div class="ability-popup__panel">
+      <p id="ability-popup-name" class="ability-popup__name"></p>
+      <p id="ability-popup-summary" class="ability-popup__summary"></p>
+      <p id="ability-popup-description" class="ability-popup__description"></p>
+      <button class="ability-popup__close" id="ability-popup-close" aria-label="Close">✕</button>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.classList.remove('ability-popup--open');
+  overlay.querySelector('.ability-popup__backdrop')!.addEventListener('click', close);
+  overlay.querySelector('#ability-popup-close')!.addEventListener('click', close);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+  // Event delegation — any ability chip click anywhere on the page
+  document.addEventListener('click', (e: Event) => {
+    const chip = (e.target as HTMLElement).closest<HTMLElement>('[data-ability-name]');
+    if (!chip) return;
+    const name = chip.dataset.abilityName!;
+    const ab = abilityMap.get(name);
+    if (!ab) return;
+
+    overlay.querySelector('#ability-popup-name')!.textContent = ab.name;
+    overlay.querySelector('#ability-popup-summary')!.textContent = ab.summary;
+    overlay.querySelector('#ability-popup-description')!.textContent = ab.description;
+    overlay.classList.add('ability-popup--open');
+  });
+}
 
 export function renderCard(mini: Miniature, options: CardOptions = {}): string {
   const img       = mini.image_url ?? '/images/No_Image_Available.jpg';

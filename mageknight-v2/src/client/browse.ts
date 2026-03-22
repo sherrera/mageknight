@@ -6,7 +6,7 @@
  * collection ownership state, and the "add to collection" action.
  */
 
-import { renderCard, type Miniature } from './components/mini-card';
+import { renderCard, setupAbilityPopup, type Miniature } from './components/mini-card';
 import {
   createFilterPanel,
   defaultState,
@@ -217,6 +217,7 @@ async function init(): Promise<void> {
     }
   }
 
+  setupAbilityPopup();
   await loadCollectionState();
   await refresh();
 }

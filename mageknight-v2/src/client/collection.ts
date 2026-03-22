@@ -8,7 +8,7 @@
  * the affected card so the page stays responsive.
  */
 
-import { renderCard, type Miniature } from './components/mini-card';
+import { renderCard, setupAbilityPopup, type Miniature } from './components/mini-card';
 import {
   createFilterPanel,
   applyFilters,
@@ -424,6 +424,8 @@ async function init(): Promise<void> {
     filterOptions,
     (state) => { filterState = state; renderGrid(); },
   );
+
+  setupAbilityPopup();
 
   try {
     const items = await fetchCollection();

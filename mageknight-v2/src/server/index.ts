@@ -43,7 +43,9 @@ if (PUBLIC_MODE) {
     }
     next();
   });
-  app.use(['/api/armies', '/api/abilities'], (_req, res) => {
+  // Armies remain fully blocked; abilities GET is allowed so the reference
+  // page can show ability colours even in public mode.
+  app.use('/api/armies', (_req, res) => {
     res.status(403).json({ error: 'Not available in public mode' });
   });
 }
