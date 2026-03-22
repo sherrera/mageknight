@@ -1,3 +1,10 @@
+# Project directories not part of the webapp
+archive/
+database/
+backups/
+data/
+*.pdf
+
 # Python
 __pycache__/
 *.pyc
